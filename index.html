@@ -10,8 +10,6 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ethers.js for Web3 Integration on Mobile -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,33 +40,33 @@
   </script>
 
   <style>
+    /* Reset total de toque para garantir clique 100% funcional no celular */
     * {
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: rgba(130, 71, 229, 0.2);
+      box-sizing: border-box;
     }
-    button, a, input, select {
-      touch-action: manipulation;
-      cursor: pointer;
-    }
-    input, pre, code {
-      user-select: text;
-    }
-    body {
+    html, body {
+      height: 100%;
       background-color: #07090E;
       color: #F3F4F6;
       font-family: 'Inter', sans-serif;
-      overscroll-behavior-y: none;
+      margin: 0;
+      padding: 0;
+    }
+    button, a, input, select {
+      cursor: pointer;
+      touch-action: manipulation;
     }
     .mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* Custom safe area insets for notched phones */
+    /* Insets para celulares com entalhe/notch */
     .safe-top {
       padding-top: max(env(safe-area-inset-top), 0.75rem);
     }
     .safe-bottom {
-      padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+      padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
     }
 
-    /* Glow utilities */
     .glow-purple {
       box-shadow: 0 0 15px -3px rgba(130, 71, 229, 0.4);
     }
@@ -76,22 +74,17 @@
       box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.4);
     }
 
-    /* Mobile active touch feedback - avoids gesture cancellation in WebKit */
-    .touch-press:active {
-      opacity: 0.75;
+    .touch-btn:active {
+      opacity: 0.7;
     }
 
-    /* Smooth tab switching animation */
-    .tab-view {
-      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    .tab-content {
+      display: none;
     }
-    .tab-view.hidden {
-      display: none !important;
-      opacity: 0;
-      transform: translateY(8px);
+    .tab-content.active {
+      display: block;
     }
 
-    /* Hide scrollbars for clean native app look */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -101,114 +94,113 @@
     }
   </style>
 </head>
-<body class="h-full flex flex-col justify-between bg-[#07090E] text-slate-100 overflow-hidden">
+<body class="h-full flex flex-col justify-between bg-[#07090E] text-slate-100 overflow-hidden relative">
 
-  <header class="safe-top bg-[#0D111A]/95 border-b border-slate-800/80 px-4 pb-3 flex items-center justify-between z-30 backdrop-blur-md shrink-0">
-    <div class="flex items-center space-x-2.5">
+  <!-- Header Superior -->
+  <header class="safe-top bg-[#0D111A] border-b border-slate-800 px-3 pb-2.5 flex items-center justify-between z-20 shrink-0">
+    <div class="flex items-center space-x-2">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 via-indigo-600 to-emerald-500 p-0.5 flex items-center justify-center glow-purple">
         <div class="w-full h-full bg-[#07090E] rounded-[10px] flex items-center justify-center">
           <svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"></polyline>
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"></polygon>
             <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
           </svg>
         </div>
       </div>
       <div>
         <div class="flex items-center space-x-1.5">
-          <h1 class="text-sm font-bold text-white tracking-tight">Triangulagem DEX</h1>
-          <span id="headerLiveStatus" class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse">LIVE</span>
+          <h1 class="text-xs font-bold text-white tracking-tight">Triangulagem DEX</h1>
+          <span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse">LIVE</span>
         </div>
-        <div class="flex items-center space-x-2 text-[10px] text-slate-400 font-mono">
-          <span id="gasHeaderBadge" class="text-cyan-400">⛽ 32 Gwei (~$0.008)</span>
-        </div>
+        <div class="text-[10px] text-cyan-400 font-mono">⛽ 32 Gwei (~$0.008)</div>
       </div>
     </div>
 
-    <!-- Header Actions -->
-    <div class="flex items-center space-x-2">
-      <button id="btnHeaderNetwork" class="flex items-center space-x-1 bg-slate-900 border border-slate-700 text-slate-200 text-[11px] px-2.5 py-1.5 rounded-xl font-medium touch-press">
+    <!-- Botões Rápidos do Topo -->
+    <div class="flex items-center space-x-1.5">
+      <button onclick="handleQuickNetwork()" class="touch-btn bg-slate-900 border border-slate-700 text-slate-200 text-[10px] px-2.5 py-1.5 rounded-xl font-medium flex items-center space-x-1">
         <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-        <span id="headerNetworkName">Polygon</span>
-        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        <span id="headerNetworkLabel">Polygon</span>
       </button>
 
-      <button id="btnHeaderWallet" class="w-8 h-8 rounded-xl bg-purple-900/40 border border-purple-700/60 flex items-center justify-center text-purple-300 touch-press">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+      <button onclick="handleConnectWallet()" class="touch-btn px-2.5 py-1.5 rounded-xl bg-purple-900/60 border border-purple-500/80 text-purple-200 font-mono text-[10px] font-bold flex items-center space-x-1">
+        <span>🦊</span>
+        <span id="headerWalletShortAddr">Conectar</span>
       </button>
     </div>
   </header>
 
-  <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-4">
+  <!-- Diagnóstico de Toque em Tempo Real -->
+  <div class="bg-purple-950/60 border-b border-purple-800/40 px-3 py-1.5 flex items-center justify-between text-[10px]">
+    <div class="flex items-center space-x-1.5 text-purple-200">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+      <span>Interatividade:</span>
+      <span id="touchCheckLabel" class="text-emerald-300 font-bold">100% Ativa</span>
+    </div>
+    <button onclick="handleTouchTest()" class="touch-btn bg-purple-600 hover:bg-purple-500 text-white font-bold px-2 py-0.5 rounded-lg text-[9px] font-mono shadow">
+      Toque Aqui para Testar (<span id="touchCounter">0</span>)
+    </button>
+  </div>
 
-    <!-- TAB 1: RADAR & DASHBOARD -->
-    <section id="tabRadar" class="tab-view space-y-3.5">
+  <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-3.5 relative z-10">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: RADAR (PRINCIPAL)                   -->
+    <!-- ========================================== -->
+    <div id="viewTabRadar" class="tab-content active space-y-3.5">
       
-      <!-- PWA Tip Banner -->
-      <div id="pwaBanner" class="bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-800/40 rounded-2xl p-3 flex items-center justify-between text-xs">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-lg">📲</span>
-          <div>
-            <p class="font-semibold text-white text-[11px]">Instale no seu Celular</p>
-            <p class="text-[10px] text-slate-400">Toque em "Compartilhar" → "Adicionar à Tela de Início"</p>
-          </div>
-        </div>
-        <button onclick="dismissBanner()" class="text-slate-400 hover:text-white text-xs p-1">✕</button>
-      </div>
-
-      <!-- Quick Metrics Hero Card -->
-      <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+      <!-- Card Hero de Ganhos Diários (0.20% a 0.50%) -->
+      <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 shadow-xl relative overflow-hidden">
         <div class="flex items-start justify-between">
           <div>
             <div class="flex items-center space-x-2">
               <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lucro Diário Acumulado</span>
-              <span id="heroModeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">PAPER</span>
+              <span id="heroModeLabel" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">PAPER</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-1">
-              <span id="heroProfitUsdt" class="text-2xl font-bold font-mono text-emerald-400">+$3.42</span>
-              <span id="heroProfitRoi" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-1.5 py-0.5 rounded">+0.342%</span>
+              <span id="heroProfitAmount" class="text-2xl font-bold font-mono text-emerald-400">+$3.42</span>
+              <span id="heroProfitPercent" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-1.5 py-0.5 rounded">+0.342%</span>
             </div>
           </div>
 
           <div class="text-right">
-            <span class="text-[10px] text-slate-400 block font-mono">Banca Base</span>
-            <span id="heroCapital" class="text-xs font-mono font-bold text-slate-200">1,000 USDT</span>
+            <span class="text-[10px] text-slate-400 block font-mono">Banca</span>
+            <span id="heroCapitalAmount" class="text-xs font-mono font-bold text-slate-200">1,000 USDT</span>
             <span class="text-[9px] text-slate-400 block mt-0.5">Ciclo: 250 USDT</span>
           </div>
         </div>
 
-        <!-- Target Progress Bar (0.20% to 0.50%) -->
+        <!-- Barra de Progresso da Meta -->
         <div class="mt-3.5 space-y-1.5">
           <div class="flex justify-between items-center text-[10px] font-mono">
-            <span class="text-slate-400">Meta Protegida: 0.20% ~ 0.50%</span>
-            <span id="heroProgressPercent" class="text-emerald-400 font-semibold">68.4% da meta</span>
+            <span class="text-slate-400">Meta: 0.20% ~ 0.50% ao dia</span>
+            <span id="heroProgressPercentText" class="text-emerald-400 font-semibold">68.4% da meta</span>
           </div>
           <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-            <div id="heroProgressBar" class="h-2 rounded-full bg-gradient-to-r from-purple-500 via-indigo-400 to-emerald-400 transition-all duration-500" style="width: 68.4%"></div>
+            <div id="heroProgressBarFill" class="h-2 rounded-full bg-gradient-to-r from-purple-500 via-indigo-400 to-emerald-400 transition-all duration-300" style="width: 68.4%"></div>
           </div>
-          <p id="heroCapWarning" class="text-[9px] text-emerald-400/80 font-mono hidden">
-            🏆 Meta diária atingida! O bot pausou automaticamente para preservar o capital.
-          </p>
         </div>
       </div>
 
-      <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3 relative overflow-hidden">
+      <!-- Radar de Triangulação Gráfico -->
+      <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-3 relative overflow-hidden">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span class="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse"></span>
             <h2 class="text-xs font-bold text-white uppercase tracking-wider">Radar de Triangulagem</h2>
           </div>
-          <span id="radarActivePair" class="text-[10px] font-mono font-semibold text-purple-300 bg-purple-950/70 border border-purple-800/60 px-2 py-0.5 rounded-full">USDT → WETH → POL</span>
+          <span id="radarActiveRouteText" class="text-[10px] font-mono font-semibold text-purple-300 bg-purple-950/70 border border-purple-800/60 px-2 py-0.5 rounded-full">USDT → WETH → POL</span>
         </div>
 
-        <!-- Interactive SVG Triangle Visualizer -->
-        <div class="relative bg-[#07090E] rounded-xl border border-slate-800/60 h-44 flex items-center justify-center overflow-hidden">
+        <!-- Triângulo Gráfico Tátil -->
+        <div class="relative bg-[#07090E] rounded-xl border border-slate-800 h-44 flex items-center justify-center overflow-hidden">
           <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 320 170" preserveAspectRatio="none">
             <line x1="60" y1="125" x2="160" y2="35" stroke="#8247E5" stroke-width="2" stroke-dasharray="4,4" class="opacity-80 animate-pulse" />
             <line x1="160" y1="35" x2="260" y2="125" stroke="#10B981" stroke-width="2" stroke-dasharray="4,4" class="opacity-80 animate-pulse" />
             <line x1="260" y1="125" x2="60" y2="125" stroke="#38BDF8" stroke-width="2" stroke-dasharray="4,4" class="opacity-80 animate-pulse" />
           </svg>
 
-          <!-- Node 1: USDT -->
+          <!-- Vértice 1: USDT -->
           <div class="absolute bottom-2 left-4 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 p-0.5 glow-emerald">
               <div class="w-full h-full bg-[#0D111A] rounded-[10px] flex flex-col items-center justify-center">
@@ -216,147 +208,170 @@
                 <span class="text-[7px] text-slate-400">Origem</span>
               </div>
             </div>
-            <span class="text-[9px] font-mono text-emerald-400 mt-0.5 font-semibold" id="triangleNode1Quote">250 USDT</span>
+            <span class="text-[9px] font-mono text-emerald-400 mt-0.5 font-semibold">250 USDT</span>
           </div>
 
-          <!-- Node 2: Token B -->
+          <!-- Vértice 2: WETH -->
           <div class="absolute top-2 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 p-0.5 glow-purple">
               <div class="w-full h-full bg-[#0D111A] rounded-[10px] flex flex-col items-center justify-center">
-                <span id="triangleNode2Symbol" class="text-[10px] font-bold font-mono text-purple-300">WETH</span>
+                <span id="triangleNode2Label" class="text-[10px] font-bold font-mono text-purple-300">WETH</span>
                 <span class="text-[7px] text-slate-400">Perna 1</span>
               </div>
             </div>
-            <span class="text-[9px] font-mono text-purple-300 mt-0.5 font-semibold" id="triangleNode2Quote">0.0781 ETH</span>
+            <span id="triangleNode2Quote" class="text-[9px] font-mono text-purple-300 mt-0.5 font-semibold">0.0781 ETH</span>
           </div>
 
-          <!-- Node 3: Token C -->
+          <!-- Vértice 3: POL -->
           <div class="absolute bottom-2 right-4 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-700 p-0.5">
               <div class="w-full h-full bg-[#0D111A] rounded-[10px] flex flex-col items-center justify-center">
-                <span id="triangleNode3Symbol" class="text-[10px] font-bold font-mono text-cyan-300">POL</span>
+                <span id="triangleNode3Label" class="text-[10px] font-bold font-mono text-cyan-300">POL</span>
                 <span class="text-[7px] text-slate-400">Perna 2</span>
               </div>
             </div>
-            <span class="text-[9px] font-mono text-cyan-300 mt-0.5 font-semibold" id="triangleNode3Quote">682.1 POL</span>
+            <span id="triangleNode3Quote" class="text-[9px] font-mono text-cyan-300 mt-0.5 font-semibold">682.1 POL</span>
           </div>
 
-          <!-- Center Dynamic Spread Badge -->
+          <!-- Spread Central -->
           <div class="z-20 bg-slate-900/95 border border-purple-500/50 px-3 py-1.5 rounded-xl shadow-2xl flex flex-col items-center backdrop-blur-md">
             <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Spread Líquido</span>
-            <span id="triangleCenterSpread" class="text-sm font-bold font-mono text-emerald-400">+0.142%</span>
-            <span id="triangleCenterProfit" class="text-[9px] font-mono text-slate-300">+$0.355</span>
+            <span id="triangleSpreadValue" class="text-sm font-bold font-mono text-emerald-400">+0.142%</span>
+            <span id="triangleProfitValue" class="text-[9px] font-mono text-slate-300">+$0.355</span>
           </div>
         </div>
 
-        <!-- Single Tap Trigger Button -->
-        <button id="btnQuickExecuteCurrent" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-1.5 touch-press shadow-lg shadow-purple-950/40">
+        <!-- Botão Disparar Oportunidade Atual -->
+        <button onclick="handleTriggerCurrent()" class="touch-btn w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-1.5 shadow-lg shadow-purple-950/40">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           <span>Disparar Oportunidade Atual</span>
         </button>
       </div>
 
       <!-- Feed ao Vivo do Mercado -->
-      <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-3.5 space-y-2">
+      <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-3.5 space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             Feed ao Vivo do Mercado
           </span>
-          <span id="tradesCounterMini" class="text-[10px] font-mono text-slate-400">14 trades</span>
+          <span id="radarTradesCount" class="text-[10px] font-mono text-slate-400">14 trades</span>
         </div>
-        <div id="radarMiniLog" class="font-mono text-[10px] space-y-1.5 text-slate-300 max-h-24 overflow-y-auto no-scrollbar"></div>
+        <div id="radarMiniFeed" class="font-mono text-[10px] space-y-1.5 text-slate-300 max-h-24 overflow-y-auto no-scrollbar"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- TAB 2: ROTAS -->
-    <section id="tabTriangles" class="tab-view space-y-3 hidden">
+    <!-- ========================================== -->
+    <!-- TAB 2: ROTAS                               -->
+    <!-- ========================================== -->
+    <div id="viewTabTriangles" class="tab-content space-y-3">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider">Pares Triangulares Ativos</h2>
           <p class="text-[10px] text-slate-400">Roteamento multi-DEX com liquidação em USDT</p>
         </div>
-        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="trianglesListCount">5 rotas</span>
+        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">5 rotas</span>
       </div>
 
-      <div id="trianglesMobileCards" class="space-y-2.5"></div>
-    </section>
+      <div id="routesCardsContainer" class="space-y-2.5">
+        <!-- Gerado dinamicamente -->
+      </div>
+    </div>
 
-    <!-- TAB 3: HISTÓRICO DE TRADES -->
-    <section id="tabTrades" class="tab-view space-y-3 hidden">
+    <!-- ========================================== -->
+    <!-- TAB 3: TRADES / AUDITORIA                  -->
+    <!-- ========================================== -->
+    <div id="viewTabTrades" class="tab-content space-y-3">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider">Histórico de Execuções</h2>
           <p class="text-[10px] text-slate-400">Registros atômicos e travas de segurança</p>
         </div>
-        <button id="btnClearTerminalLogs" class="text-[10px] font-mono text-slate-400 hover:text-white bg-slate-800/80 px-2.5 py-1 rounded-lg touch-press">Limpar</button>
+        <button onclick="handleClearLogs()" class="touch-btn text-[10px] font-mono text-slate-300 hover:text-white bg-slate-800 px-2.5 py-1 rounded-lg">Limpar</button>
       </div>
 
-      <div id="tradesTerminalContainer" class="bg-[#07090E] border border-slate-800/90 rounded-2xl p-3 font-mono text-[10px] space-y-2 min-h-[360px] max-h-[500px] overflow-y-auto no-scrollbar"></div>
-    </section>
+      <div id="tradesTerminalLogs" class="bg-[#07090E] border border-slate-800 rounded-2xl p-3 font-mono text-[10px] space-y-2 min-h-[320px] max-h-[460px] overflow-y-auto no-scrollbar">
+        <!-- Preenchido via logEvent -->
+      </div>
+    </div>
 
-    <!-- TAB 4: CARTEIRA WEB3 -->
-    <section id="tabWallet" class="tab-view space-y-3 hidden">
-      <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
+    <!-- ========================================== -->
+    <!-- TAB 4: CARTEIRA WEB3                       -->
+    <!-- ========================================== -->
+    <div id="viewTabWallet" class="tab-content space-y-3">
+      <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Conexão Web3 Mobile
+          <span>🦊</span> Conexão Web3 Mobile
         </h2>
 
         <div class="bg-[#07090E] p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Status:</span>
-            <span id="walletConnectStatus" class="font-mono text-amber-400 font-semibold">Desconectada (Modo Paper)</span>
+            <span id="walletDetailStatus" class="font-mono text-amber-400 font-semibold">Desconectada (Modo Paper)</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Endereço:</span>
-            <span id="walletAddressDisplay" class="font-mono text-slate-300">0x... (Nenhum)</span>
+            <span id="walletDetailAddress" class="font-mono text-slate-300 text-[11px]">0x... (Nenhum)</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Saldo Gas (POL):</span>
-            <span id="walletGasBalance" class="font-mono text-cyan-400 font-semibold">1.450 POL (~$0.64)</span>
+            <span id="walletDetailGas" class="font-mono text-cyan-400 font-semibold">1.450 POL (~$0.64)</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Saldo USDT:</span>
-            <span id="walletUsdtBalance" class="font-mono text-emerald-400 font-semibold">1,000.00 USDT</span>
+            <span id="walletDetailUsdt" class="font-mono text-emerald-400 font-semibold">1,000.00 USDT</span>
           </div>
         </div>
 
-        <button id="btnConnectMobileWallet" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs touch-press flex items-center justify-center space-x-2 shadow-lg shadow-purple-950/40">
+        <button onclick="handleConnectWallet()" class="touch-btn w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-purple-950/40">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-          <span id="btnConnectMobileWalletText">Conectar MetaMask / Trust</span>
+          <span id="walletConnectBtnText">Conectar MetaMask Agora</span>
         </button>
 
-        <button id="btnOpenMetaMaskTutorial" class="w-full py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/80 text-purple-300 font-mono text-[11px] border border-purple-500/30 flex items-center justify-center space-x-1.5 touch-press">
-          <span>🦊</span>
-          <span>Como Abrir Dentro da MetaMask (Passo a Passo)</span>
+        <button onclick="handleSimulateApproval()" class="touch-btn w-full py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 font-mono text-[11px] flex items-center justify-center space-x-1.5">
+          <span>✅</span>
+          <span>Testar Aprovação ERC-20 (Simulação)</span>
         </button>
       </div>
 
-      <div id="metaMaskGuideCard" class="bg-[#0D111A] border border-purple-500/40 rounded-2xl p-4 space-y-3.5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="text-xl">🦊</span>
-            <div>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Como Rodar no App da MetaMask</h3>
-              <p class="text-[10px] text-slate-400">Navegador Web3 integrado do celular</p>
-            </div>
+      <!-- Guia Rápido -->
+      <div class="bg-[#0D111A] border border-purple-500/40 rounded-2xl p-3.5 space-y-2 text-xs">
+        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">💡 Dica de Conexão na MetaMask</h3>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Se você estiver no navegador interno da MetaMask, o botão roxo acima solicita autorização imediata para ler seu endereço público e saldos na rede Polygon com segurança.
+        </p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: AJUSTES                             -->
+    <!-- ========================================== -->
+    <div id="viewTabSettings" class="tab-content space-y-3.5">
+      <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-4">
+        <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span>⚙️</span> Configurações Operacionais
+        </h2>
+
+        <!-- Modo Paper vs Live -->
+        <div class="space-y-1.5">
+          <label class="text-[11px] text-slate-300 font-medium">Modo de Operação</label>
+          <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <button id="btnModePaper" onclick="handleSetMode('paper')" class="touch-btn py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">Simulação (Paper)</button>
+            <button id="btnModeLive" onclick="handleSetMode('live')" class="touch-btn py-2 text-xs font-semibold rounded-lg text-slate-400">Execução On-Chain</button>
           </div>
-          <span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-700/60 font-mono px-2 py-0.5 rounded-full">Guia Rápido</span>
         </div>
 
-        <div class="space-y-2 text-[11px]">
-          <div class="flex items-start space-x-2.5 bg-[#07090E] p-2.5 rounded-xl border border-slate-800">
-            <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-300 flex items-center justify-center font-bold font-mono text-[10px] shrink-0 mt-0.5">1</span>
-            <div>
-              <p class="font-semibold text-slate-200">Hospede este arquivo HTML na Web (HTTPS)</p>
-              <p class="text-slate-400 text-[10px] mt-0.5">
-                A MetaMask Mobile bloqueia arquivos locais (<code class="text-purple-300">file://</code>). Suba o arquivo gratuitamente na <strong class="text-slate-200">Vercel</strong> ou <strong class="text-slate-200">GitHub Pages</strong>.
-              </p>
-            </div>
+        <!-- Banca Base -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-300 font-medium">Banca Base (USDT)</span>
+            <span class="font-mono text-purple-400 font-bold" id="settingsBancaLabel">1,000 USDT</span>
           </div>
+          <input type="number" id="inputSettingsBanca" value="1000" min="20" step="50" onchange="handleBancaChange(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-mono text-white focus:outline-none focus:border-purple-500" />
+        </div>
 
-          <div class="flex items-start space-x-2.5 bg-[#07090E] p-2.5 rounded-xl border border-slate-800">
-            <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-300 flex items-center justify-center font-bold font-mono text-[10px] shrink-0 mt-0.5">2</span>
-            <div>
-              <p class="font-
+        <!-- Meta Diária -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-300 font-medium">Meta Diária com Trava</span>
+            <span class="text-emerald-400 font-mono font-bold" id="settingsMetaRangeLabel"
