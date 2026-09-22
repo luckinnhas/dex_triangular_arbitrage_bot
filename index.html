@@ -20,7 +20,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding-bottom: 70px;
+      padding-bottom: 75px;
     }
     button {
       font-family: inherit;
@@ -33,88 +33,58 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    /* Faixa de Diagnóstico de Cache */
-    .version-banner {
-      background: #EAB308;
-      color: #000;
-      font-weight: 800;
-      font-size: 11px;
-      text-align: center;
-      padding: 6px 10px;
-      letter-spacing: 0.5px;
-    }
-
     /* Header */
     header {
       background: #0D111A;
       border-bottom: 1px solid #1E293B;
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .logo-box {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       background: linear-gradient(135deg, #8247E5, #10B981);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
+      font-weight: 800;
       color: white;
-      font-size: 14px;
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(130, 71, 229, 0.35);
     }
     .brand-title {
-      font-size: 13px;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 700;
       color: #FFF;
+      line-height: 1.2;
     }
     .badge-live {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid #10B981;
       color: #34D399;
       font-size: 9px;
-      padding: 1px 6px;
+      padding: 2px 7px;
       border-radius: 10px;
-      font-weight: bold;
-    }
-
-    /* Testador de Toque em Destaque */
-    .touch-tester-card {
-      margin: 12px;
-      padding: 12px;
-      background: #131A2A;
-      border: 2px dashed #8247E5;
-      border-radius: 14px;
-      text-align: center;
-    }
-    .btn-test {
-      width: 100%;
-      background: #10B981;
-      color: #000;
-      font-weight: 900;
-      font-size: 13px;
-      padding: 12px;
-      border-radius: 10px;
-      text-transform: uppercase;
-      margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-    .btn-test:active {
-      transform: scale(0.98);
-      background: #34D399;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 2px;
     }
 
     /* Conteúdo Principal */
     main {
       flex: 1;
-      padding: 0 12px;
+      padding: 12px;
     }
     .card {
       background: #0D111A;
@@ -127,11 +97,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .card-title {
       font-size: 11px;
-      font-weight: bold;
+      font-weight: 700;
       text-transform: uppercase;
       color: #94A3B8;
       letter-spacing: 0.5px;
@@ -139,7 +109,7 @@
 
     /* Hero Lucro */
     .profit-val {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       color: #10B981;
       font-family: monospace;
@@ -151,7 +121,7 @@
       color: #10B981;
       font-size: 11px;
       font-weight: bold;
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 6px;
       margin-left: 6px;
     }
@@ -160,7 +130,7 @@
       height: 8px;
       border-radius: 4px;
       overflow: hidden;
-      margin-top: 8px;
+      margin-top: 10px;
     }
     .progress-bar-fill {
       background: linear-gradient(90deg, #8247E5, #10B981);
@@ -173,8 +143,8 @@
     .triangle-box {
       background: #05070A;
       border: 1px solid #1E293B;
-      border-radius: 12px;
-      height: 140px;
+      border-radius: 14px;
+      height: 150px;
       position: relative;
       display: flex;
       align-items: center;
@@ -183,9 +153,9 @@
     }
     .node {
       position: absolute;
-      width: 46px;
-      height: 46px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -194,30 +164,33 @@
       font-weight: bold;
       font-family: monospace;
       color: #FFF;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
-    .node-usdt { bottom: 8px; left: 16px; background: #065F46; border: 1px solid #10B981; }
-    .node-weth { top: 8px; background: #5B21B6; border: 1px solid #8247E5; }
-    .node-pol  { bottom: 8px; right: 16px; background: #0E7490; border: 1px solid #06B6D4; }
+    .node-usdt { bottom: 12px; left: 18px; background: #065F46; border: 1px solid #10B981; }
+    .node-weth { top: 10px; background: #5B21B6; border: 1px solid #8247E5; }
+    .node-pol  { bottom: 12px; right: 18px; background: #0E7490; border: 1px solid #06B6D4; }
 
     .spread-center {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid #8247E5;
-      padding: 6px 12px;
-      border-radius: 10px;
+      padding: 8px 14px;
+      border-radius: 12px;
       text-align: center;
       z-index: 5;
+      box-shadow: 0 4px 12px rgba(130, 71, 229, 0.25);
     }
 
-    /* Botões Principais de Ação */
+    /* Botões de Ação */
     .btn-action {
       width: 100%;
       background: #8247E5;
       color: white;
       font-weight: bold;
-      font-size: 12px;
-      padding: 12px;
+      font-size: 13px;
+      padding: 13px;
       border-radius: 12px;
       margin-top: 6px;
+      transition: background 0.15s ease;
     }
     .btn-action:active { background: #6D28D9; }
 
@@ -227,13 +200,13 @@
       color: white;
       font-weight: bold;
       font-size: 13px;
-      padding: 12px;
+      padding: 13px;
       border-radius: 12px;
-      margin: 8px 0;
+      margin: 10px 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
     }
     .btn-wallet:active { background: #EA580C; }
 
@@ -247,7 +220,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 60px;
+      height: 62px;
       background: #0D111A;
       border-top: 1px solid #1E293B;
       display: flex;
@@ -264,7 +237,8 @@
       align-items: center;
       gap: 4px;
       font-weight: bold;
-      padding: 8px;
+      padding: 8px 14px;
+      transition: color 0.15s ease;
     }
     .nav-btn.active { color: #8247E5; }
 
@@ -273,12 +247,12 @@
       background: #05070A;
       border: 1px solid #1E293B;
       border-radius: 10px;
-      padding: 8px;
+      padding: 10px;
       font-family: monospace;
       font-size: 10px;
       max-height: 180px;
       overflow-y: auto;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .log-success { color: #10B981; }
     .log-warn { color: #F59E0B; }
@@ -286,11 +260,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Aviso de Versão Amarelo para confirmar atualização de Cache -->
-  <div class="version-banner" id="versionBanner">
-    🚀 CÓDIGO V3.1 ATIVO (SE ESTIVER VENDO ISTO, O CÓDIGO NOVO CARREGOU!)
-  </div>
 
   <!-- Header -->
   <header>
@@ -301,20 +270,10 @@
         <span class="badge-live">POLYGON ACTIVE</span>
       </div>
     </div>
-    <button id="btnHeaderConnect" onclick="executeConnectWallet()" style="background:#5B21B6; color:#FFF; font-size:11px; padding:6px 12px; border-radius:8px; font-weight:bold;">
+    <button id="btnHeaderConnect" onclick="executeConnectWallet()" ontouchend="executeConnectWallet()" style="background:#5B21B6; color:#FFF; font-size:11px; padding:7px 14px; border-radius:8px; font-weight:bold;">
       🦊 Conectar
     </button>
   </header>
-
-  <!-- TESTADOR DE TOQUE À PROVA DE FALHAS -->
-  <div class="touch-tester-card">
-    <div style="font-size:12px; font-weight:bold; color:#A7F3D0;">TESTE DE RESPOSTA DO SEU CELULAR:</div>
-    <div style="font-size:10px; color:#94A3B8; margin-top:2px;">Toque no botão verde abaixo para verificar se a tela responde:</div>
-    <button class="btn-test" id="btnTestClick" onclick="handleDirectTest()" ontouchend="handleDirectTest()">
-      👉 TOQUE AQUI (<span id="testCounter">0</span> TOQUES DETECTADOS) 👈
-    </button>
-    <div id="testStatusMsg" style="font-size:11px; font-weight:bold; color:#34D399; margin-top:6px;">Pronto para receber toques</div>
-  </div>
 
   <main>
     <!-- ABA 1: RADAR -->
@@ -332,7 +291,7 @@
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="barProfitFill"></div>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:#94A3B8; margin-top:6px;">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:#94A3B8; margin-top:8px;">
           <span>Banca: 1.000 USDT</span>
           <span>Trava em 0.50%</span>
         </div>
@@ -349,7 +308,7 @@
           <div class="node node-weth" id="nodeTokenB">WETH</div>
           <div class="node node-pol" id="nodeTokenC">POL</div>
           <div class="spread-center">
-            <div style="font-size:8px; color:#94A3B8;">SPREAD LÍQUIDO</div>
+            <div style="font-size:8px; color:#94A3B8; text-transform:uppercase;">Spread Líquido</div>
             <div class="profit-pct" id="valSpreadPct" style="margin:2px 0;">+0.142%</div>
             <div style="font-size:9px; color:#CBD5E1;">+$0.355</div>
           </div>
@@ -377,7 +336,7 @@
         <div class="card-header">
           <span class="card-title">Carteira MetaMask</span>
         </div>
-        <div style="background:#05070A; padding:10px; border-radius:10px; font-size:11px; margin-bottom:10px;">
+        <div style="background:#05070A; padding:12px; border-radius:10px; font-size:11px; margin-bottom:12px; line-height:1.6;">
           <div style="margin-bottom:6px;">Status: <b id="walletStatusText" style="color:#F59E0B;">Desconectado</b></div>
           <div style="margin-bottom:6px;">Endereço: <span class="mono" id="walletAddrText" style="color:#94A3B8; font-size:10px;">Nenhum</span></div>
           <div>Rede: <b style="color:#8247E5;">Polygon Mainnet (PoS)</b></div>
@@ -397,14 +356,14 @@
         <div class="card-header">
           <span class="card-title">Configurações de Risco</span>
         </div>
-        <div style="font-size:12px; margin-bottom:10px;">
-          <label style="display:block; color:#94A3B8; margin-bottom:4px;">Capital Base (USDT):</label>
-          <input type="number" id="inputCapital" value="1000" style="width:100%; background:#05070A; border:1px solid #334155; color:white; padding:8px; border-radius:8px; font-family:monospace;" />
+        <div style="font-size:12px; margin-bottom:12px;">
+          <label style="display:block; color:#94A3B8; margin-bottom:5px;">Capital Base (USDT):</label>
+          <input type="number" id="inputCapital" value="1000" style="width:100%; background:#05070A; border:1px solid #334155; color:white; padding:10px; border-radius:8px; font-family:monospace;" />
         </div>
         <div style="font-size:12px; margin-bottom:10px;">
-          <label style="display:block; color:#94A3B8; margin-bottom:4px;">Meta Diária de Lucro:</label>
-          <div style="color:#10B981; font-weight:bold; margin-bottom:4px;">0,20% a 0,50%</div>
-          <p style="font-size:10px; color:#64748B;">O bot pausa automaticamente ao atingir 0,50% ao dia para proteger seus ganhos.</p>
+          <label style="display:block; color:#94A3B8; margin-bottom:5px;">Meta Diária de Lucro:</label>
+          <div style="color:#10B981; font-weight:bold; margin-bottom:4px; font-size:14px;">0,20% a 0,50%</div>
+          <p style="font-size:10px; color:#64748B; line-height:1.4;">O bot pausa automaticamente ao atingir 0,50% ao dia para proteger seus ganhos.</p>
         </div>
       </div>
     </div>
@@ -428,27 +387,9 @@
 
   <script>
     /* ESTADO GLOBAL */
-    var touchCount = 0;
     var accumulatedProfit = 3.42;
     var capital = 1000;
     var userAddress = null;
-
-    /* REGISTRO DE TOQUE DIRETO (FUNCIONA EM QUALQUER CELULAR) */
-    function handleDirectTest(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      touchCount++;
-      var counter = document.getElementById('testCounter');
-      var status = document.getElementById('testStatusMsg');
-      if (counter) counter.innerText = touchCount;
-      if (status) {
-        status.innerText = "✅ TOQUE #" + touchCount + " FUNCIONOU PERFEITAMENTE!";
-        status.style.color = "#10B981";
-      }
-      addLog("Toque #" + touchCount + " detectado com sucesso.", "success");
-    }
 
     /* MUDANÇA DE ABAS */
     function openTab(tabId, btnElement) {
@@ -464,7 +405,6 @@
         navBtns[j].classList.remove('active');
       }
       if (btnElement) btnElement.classList.add('active');
-      addLog("Aba alterada para: " + tabId, "info");
     }
 
     /* CONEXÃO COM A METAMASK */
@@ -503,7 +443,7 @@
           addLog("Carteira conectada: " + short, "success");
         }
       } catch (err) {
-        alert("Conexão rejeitada ou cancelada: " + (err.message || err));
+        alert("Conexão cancelada: " + (err.message || err));
         addLog("Conexão cancelada pelo usuário.", "warn");
       }
     }
