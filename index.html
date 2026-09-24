@@ -1,509 +1,1415 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>DEX Arbitrage Bot</title>
-  <style>
-    /* Reset e CSS Puro (Sem CDNs externos para nunca travar a MetaMask) */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: rgba(130, 71, 229, 0.3);
-    }
-    body {
-      background-color: #07090E;
-      color: #F3F4F6;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding-bottom: 75px;
-    }
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      touch-action: manipulation;
-      border: none;
-      outline: none;
-    }
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    /* Header */
-    header {
-      background: #0D111A;
-      border-bottom: 1px solid #1E293B;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-box {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #8247E5, #10B981);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: white;
-      font-size: 15px;
-      box-shadow: 0 2px 8px rgba(130, 71, 229, 0.35);
-    }
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #FFF;
-      line-height: 1.2;
-    }
-    .badge-live {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid #10B981;
-      color: #34D399;
-      font-size: 9px;
-      padding: 2px 7px;
-      border-radius: 10px;
-      font-weight: 700;
-      display: inline-block;
-      margin-top: 2px;
-    }
-
-    /* Conteúdo Principal */
-    main {
-      flex: 1;
-      padding: 12px;
-    }
-    .card {
-      background: #0D111A;
-      border: 1px solid #1E293B;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .card-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #94A3B8;
-      letter-spacing: 0.5px;
-    }
-
-    /* Hero Lucro */
-    .profit-val {
-      font-size: 28px;
-      font-weight: 800;
-      color: #10B981;
-      font-family: monospace;
-    }
-    .profit-pct {
-      display: inline-block;
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid #10B981;
-      color: #10B981;
-      font-size: 11px;
-      font-weight: bold;
-      padding: 3px 7px;
-      border-radius: 6px;
-      margin-left: 6px;
-    }
-    .progress-bar-bg {
-      background: #1E293B;
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .progress-bar-fill {
-      background: linear-gradient(90deg, #8247E5, #10B981);
-      height: 100%;
-      width: 68.4%;
-      transition: width 0.3s ease;
-    }
-
-    /* Radar Visual */
-    .triangle-box {
-      background: #05070A;
-      border: 1px solid #1E293B;
-      border-radius: 14px;
-      height: 150px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 10px 0;
-    }
-    .node {
-      position: absolute;
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: bold;
-      font-family: monospace;
-      color: #FFF;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    }
-    .node-usdt { bottom: 12px; left: 18px; background: #065F46; border: 1px solid #10B981; }
-    .node-weth { top: 10px; background: #5B21B6; border: 1px solid #8247E5; }
-    .node-pol  { bottom: 12px; right: 18px; background: #0E7490; border: 1px solid #06B6D4; }
-
-    .spread-center {
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid #8247E5;
-      padding: 8px 14px;
-      border-radius: 12px;
-      text-align: center;
-      z-index: 5;
-      box-shadow: 0 4px 12px rgba(130, 71, 229, 0.25);
-    }
-
-    /* Botões de Ação */
-    .btn-action {
-      width: 100%;
-      background: #8247E5;
-      color: white;
-      font-weight: bold;
-      font-size: 13px;
-      padding: 13px;
-      border-radius: 12px;
-      margin-top: 6px;
-      transition: background 0.15s ease;
-    }
-    .btn-action:active { background: #6D28D9; }
-
-    .btn-wallet {
-      width: 100%;
-      background: #F97316;
-      color: white;
-      font-weight: bold;
-      font-size: 13px;
-      padding: 13px;
-      border-radius: 12px;
-      margin: 10px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-wallet:active { background: #EA580C; }
-
-    /* Abas */
-    .tab-view { display: none; }
-    .tab-view.active { display: block; }
-
-    /* Barra de Navegação Inferior */
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 62px;
-      background: #0D111A;
-      border-top: 1px solid #1E293B;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 50;
-    }
-    .nav-btn {
-      background: none;
-      color: #64748B;
-      font-size: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-weight: bold;
-      padding: 8px 14px;
-      transition: color 0.15s ease;
-    }
-    .nav-btn.active { color: #8247E5; }
-
-    /* Terminal de Logs */
-    .terminal {
-      background: #05070A;
-      border: 1px solid #1E293B;
-      border-radius: 10px;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 10px;
-      max-height: 180px;
-      overflow-y: auto;
-      line-height: 1.6;
-    }
-    .log-success { color: #10B981; }
-    .log-warn { color: #F59E0B; }
-    .log-info { color: #94A3B8; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>DEX Triangular Arbitrage Multi-Chain</title>
+<style>
+/* Reset e CSS Puro Especializado para MetaMask Mobile */
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+-webkit-tap-highlight-color: transparent;
+}
+:root {
+--bg-dark: #07090E;
+--card-bg: #0D111A;
+--card-inner: #05070B;
+--border-color: #1E293B;
+--primary: #8247E5;
+--primary-hover: #7336D4;
+--emerald: #10B981;
+--emerald-bg: rgba(16, 185, 129, 0.12);
+--amber: #F59E0B;
+--amber-bg: rgba(245, 158, 11, 0.12);
+--red: #EF4444;
+--red-bg: rgba(239, 68, 68, 0.12);
+--text-main: #F8FAFC;
+--text-muted: #94A3B8;
+--text-dim: #64748B;
+}
+body {
+background-color: var(--bg-dark);
+color: var(--text-main);
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+padding-bottom: 70px;
+overflow-x: hidden;
+}
+button, input, select {
+font-family: inherit;
+border: none;
+outline: none;
+}
+button {
+cursor: pointer;
+touch-action: manipulation;
+}
+.mono {
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+/* Animação e Pulso */
+@keyframes pulseGlow {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.5; transform: scale(0.92); }
+}
+.pulsing-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--emerald);
+box-shadow: 0 0 10px var(--emerald);
+display: inline-block;
+animation: pulseGlow 1.8s infinite;
+}
+.paused-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--amber);
+box-shadow: 0 0 8px var(--amber);
+display: inline-block;
+}
+/* Header Profissional */
+header {
+background: rgba(13, 17, 26, 0.95);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+border-bottom: 1px solid var(--border-color);
+padding: 10px 14px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 40;
+}
+.brand {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.brand-logo {
+width: 34px;
+height: 34px;
+border-radius: 10px;
+background: linear-gradient(135deg, #8247E5 0%, #10B981 100%);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 900;
+font-size: 16px;
+color: #FFF;
+box-shadow: 0 2px 10px rgba(130, 71, 229, 0.4);
+}
+.brand-info {
+display: flex;
+flex-direction: column;
+}
+.brand-name {
+font-size: 13px;
+font-weight: 800;
+color: #FFF;
+letter-spacing: -0.2px;
+}
+.chain-badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+background: rgba(130, 71, 229, 0.15);
+border: 1px solid rgba(130, 71, 229, 0.4);
+color: #C4B5FD;
+font-size: 9px;
+padding: 2px 6px;
+border-radius: 6px;
+font-weight: 700;
+margin-top: 2px;
+}
+.header-actions {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.btn-connect-header {
+background: #1E293B;
+color: #E2E8F0;
+font-size: 11px;
+font-weight: 700;
+padding: 6px 12px;
+border-radius: 8px;
+border: 1px solid #334155;
+display: flex;
+align-items: center;
+gap: 6px;
+transition: background 0.2s;
+}
+.btn-connect-header.connected {
+background: rgba(16, 185, 129, 0.15);
+border-color: var(--emerald);
+color: #34D399;
+}
+/* Barra de Controle de Execução */
+.control-bar {
+background: #090D15;
+border-bottom: 1px solid var(--border-color);
+padding: 8px 14px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 11px;
+}
+.engine-status {
+display: flex;
+align-items: center;
+gap: 8px;
+font-weight: 600;
+}
+.btn-engine-toggle {
+padding: 7px 15px;
+border-radius: 8px;
+font-size: 11px;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+display: flex;
+align-items: center;
+gap: 6px;
+transition: all 0.2s;
+}
+.btn-engine-toggle.running {
+background: var(--red);
+color: #FFF;
+box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+}
+.btn-engine-toggle.paused {
+background: var(--emerald);
+color: #FFF;
+box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+}
+/* Conteúdo das Abas */
+main {
+flex: 1;
+padding: 12px;
+}
+.tab-content {
+display: none;
+}
+.tab-content.active {
+display: block;
+}
+/* Cards e Blocos */
+.card {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+padding: 14px;
+margin-bottom: 12px;
+position: relative;
+}
+.card-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+.card-title {
+font-size: 11px;
+font-weight: 800;
+text-transform: uppercase;
+color: var(--text-muted);
+letter-spacing: 0.6px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.card-subtitle {
+font-size: 9px;
+color: var(--text-dim);
+}
+/* Grid de Moedas Monitoradas (8 Blue Chips) */
+.tokens-chip-grid {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+margin: 8px 0 4px 0;
+}
+.token-chip {
+background: var(--card-inner);
+border: 1px solid #1E293B;
+padding: 4px 8px;
+border-radius: 8px;
+font-size: 10px;
+font-weight: 700;
+color: #CBD5E1;
+display: inline-flex;
+align-items: center;
+gap: 4px;
+}
+.token-chip.anchor {
+border-color: #10B981;
+background: rgba(16, 185, 129, 0.1);
+color: #34D399;
+}
+.token-chip.active-scan {
+border-color: #8247E5;
+background: rgba(130, 71, 229, 0.2);
+color: #DDD6FE;
+}
+/* Trava e Lucro Diário */
+.profit-row {
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+.profit-val {
+font-size: 26px;
+font-weight: 900;
+color: var(--emerald);
+line-height: 1.1;
+}
+.profit-badge {
+background: var(--emerald-bg);
+border: 1px solid var(--emerald);
+color: #34D399;
+font-size: 11px;
+font-weight: 800;
+padding: 3px 8px;
+border-radius: 6px;
+}
+.progress-track {
+background: var(--card-inner);
+border: 1px solid #1A2333;
+height: 8px;
+border-radius: 4px;
+overflow: hidden;
+margin-top: 10px;
+position: relative;
+}
+.progress-fill {
+background: linear-gradient(90deg, #8247E5 0%, #10B981 100%);
+height: 100%;
+width: 42%;
+transition: width 0.4s ease;
+}
+.profit-meta-sub {
+display: flex;
+justify-content: space-between;
+font-size: 10px;
+color: var(--text-muted);
+margin-top: 8px;
+}
+.lock-banner {
+background: rgba(16, 185, 129, 0.15);
+border: 1px solid var(--emerald);
+border-radius: 10px;
+padding: 10px;
+margin-top: 10px;
+display: none;
+align-items: center;
+gap: 10px;
+font-size: 11px;
+color: #34D399;
+font-weight: 600;
+}
+/* Visualizador Triangular Multi-DEX */
+.triangle-canvas {
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+height: 175px;
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 10px 0;
+overflow: hidden;
+}
+.triangle-svg {
+position: absolute;
+width: 100%;
+height: 100%;
+pointer-events: none;
+}
+.node-pill {
+position: absolute;
+width: 54px;
+height: 54px;
+border-radius: 12px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+color: #FFF;
+font-weight: 800;
+font-size: 11px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+z-index: 5;
+}
+.node-sub {
+font-size: 7px;
+color: rgba(255,255,255,0.7);
+text-transform: uppercase;
+font-weight: 600;
+}
+.node-a { bottom: 14px; left: 16px; background: #065F46; border: 1.5px solid #10B981; }
+.node-b { top: 10px; background: #5B21B6; border: 1.5px solid #8247E5; }
+.node-c { bottom: 14px; right: 16px; background: #0E7490; border: 1.5px solid #06B6D4; }
+.center-spread-box {
+background: rgba(13, 17, 26, 0.95);
+border: 1px solid #8247E5;
+padding: 8px 14px;
+border-radius: 12px;
+text-align: center;
+z-index: 10;
+box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+.spread-title {
+font-size: 8px;
+color: var(--text-muted);
+text-transform: uppercase;
+font-weight: 700;
+letter-spacing: 0.5px;
+}
+.spread-number {
+font-size: 15px;
+font-weight: 900;
+color: var(--emerald);
+margin: 2px 0;
+}
+.spread-sub {
+font-size: 9px;
+color: #CBD5E1;
+}
+/* Roteamento Multi-DEX Info Tag */
+.dex-path-tags {
+display: flex;
+justify-content: space-between;
+gap: 4px;
+margin-top: 8px;
+}
+.dex-tag {
+flex: 1;
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+padding: 6px 4px;
+border-radius: 8px;
+text-align: center;
+font-size: 9px;
+color: var(--text-muted);
+}
+.dex-tag strong {
+color: #CBD5E1;
+display: block;
+font-size: 10px;
+}
+/* Listas e Cards de Rotas */
+.route-item {
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+border-radius: 12px;
+padding: 10px 12px;
+margin-bottom: 8px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.route-item.best {
+border-color: #8247E5;
+background: rgba(130, 71, 229, 0.08);
+}
+.route-title {
+font-size: 12px;
+font-weight: 800;
+color: #FFF;
+}
+.route-dexes {
+font-size: 9px;
+color: var(--text-dim);
+margin-top: 2px;
+}
+.route-spread {
+text-align: right;
+}
+.route-pct {
+font-size: 13px;
+font-weight: 800;
+color: var(--emerald);
+}
+.route-est {
+font-size: 9px;
+color: var(--text-muted);
+}
+/* Formulários e Ajustes */
+.setting-group {
+margin-bottom: 14px;
+}
+.setting-label {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+font-weight: 700;
+color: var(--text-muted);
+margin-bottom: 6px;
+text-transform: uppercase;
+}
+.setting-label span.highlight {
+color: var(--primary);
+}
+.mode-switcher {
+display: flex;
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+padding: 3px;
+gap: 4px;
+margin-bottom: 8px;
+}
+.mode-btn {
+flex: 1;
+background: none;
+color: var(--text-muted);
+padding: 8px;
+font-size: 11px;
+font-weight: 700;
+border-radius: 8px;
+transition: all 0.2s;
+}
+.mode-btn.active {
+background: var(--primary);
+color: #FFF;
+box-shadow: 0 2px 6px rgba(130, 71, 229, 0.3);
+}
+.input-box {
+width: 100%;
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+color: #FFF;
+padding: 10px 12px;
+border-radius: 10px;
+font-size: 13px;
+transition: border-color 0.2s;
+}
+.input-box:focus {
+border-color: var(--primary);
+}
+.slider-range {
+width: 100%;
+height: 6px;
+background: var(--border-color);
+border-radius: 3px;
+outline: none;
+-webkit-appearance: none;
+}
+.slider-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: var(--primary);
+cursor: pointer;
+border: 2px solid #FFF;
+box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.quick-pct-row {
+display: flex;
+gap: 6px;
+margin-top: 8px;
+}
+.quick-pct-btn {
+flex: 1;
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+color: var(--text-muted);
+font-size: 10px;
+font-weight: 700;
+padding: 6px 0;
+border-radius: 6px;
+}
+.quick-pct-btn:active {
+background: var(--primary);
+color: #FFF;
+}
+/* Terminal de Logs */
+.terminal-box {
+background: var(--card-inner);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+padding: 10px;
+max-height: 220px;
+overflow-y: auto;
+font-size: 10px;
+line-height: 1.6;
+}
+.log-row {
+display: flex;
+gap: 6px;
+margin-bottom: 4px;
+word-break: break-all;
+}
+.log-success { color: var(--emerald); }
+.log-warn { color: var(--amber); }
+.log-info { color: var(--text-muted); }
+.log-error { color: var(--red); }
+/* Barra de Navegação Inferior */
+nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+height: 64px;
+background: rgba(13, 17, 26, 0.98);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border-top: 1px solid var(--border-color);
+display: flex;
+justify-content: space-around;
+align-items: center;
+z-index: 50;
+padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+background: none;
+color: var(--text-dim);
+font-size: 10px;
+font-weight: 700;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+padding: 8px 12px;
+transition: color 0.15s;
+}
+.nav-item svg {
+width: 18px;
+height: 18px;
+stroke-width: 2.2;
+}
+.nav-item.active {
+color: var(--primary);
+}
+/* Notificação Toast */
+.toast {
+position: fixed;
+top: 60px;
+left: 14px;
+right: 14px;
+background: #1E1B4B;
+border: 1px solid #8247E5;
+color: #FFF;
+padding: 10px 14px;
+border-radius: 10px;
+font-size: 11px;
+font-weight: 600;
+display: none;
+align-items: center;
+gap: 8px;
+box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+z-index: 100;
+}
+</style>
 </head>
 <body>
-
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <div class="logo-box">Δ</div>
-      <div>
-        <div class="brand-title">Arbitrage DEX</div>
-        <span class="badge-live">POLYGON ACTIVE</span>
-      </div>
-    </div>
-    <button id="btnHeaderConnect" onclick="executeConnectWallet()" ontouchend="executeConnectWallet()" style="background:#5B21B6; color:#FFF; font-size:11px; padding:7px 14px; border-radius:8px; font-weight:bold;">
-      🦊 Conectar
-    </button>
-  </header>
-
-  <main>
-    <!-- ABA 1: RADAR -->
-    <div id="tab1" class="tab-view active">
-      <!-- Card Lucro Diário -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Lucro Diário Acumulado</span>
-          <span class="mono" style="font-size:10px; color:#EAB308;">META: 0.20% ~ 0.50%</span>
-        </div>
-        <div style="display:flex; align-items:baseline;">
-          <span class="profit-val" id="valProfitUsdt">+$3.42</span>
-          <span class="profit-pct" id="valProfitPct">+0.342%</span>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="barProfitFill"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:#94A3B8; margin-top:8px;">
-          <span>Banca: 1.000 USDT</span>
-          <span>Trava em 0.50%</span>
-        </div>
-      </div>
-
-      <!-- Radar Visual -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Circuito Triangular</span>
-          <span class="mono" id="labelCurrentRoute" style="font-size:10px; color:#A78BFA;">USDT → WETH → POL</span>
-        </div>
-        <div class="triangle-box">
-          <div class="node node-usdt">USDT</div>
-          <div class="node node-weth" id="nodeTokenB">WETH</div>
-          <div class="node node-pol" id="nodeTokenC">POL</div>
-          <div class="spread-center">
-            <div style="font-size:8px; color:#94A3B8; text-transform:uppercase;">Spread Líquido</div>
-            <div class="profit-pct" id="valSpreadPct" style="margin:2px 0;">+0.142%</div>
-            <div style="font-size:9px; color:#CBD5E1;">+$0.355</div>
-          </div>
-        </div>
-        <button class="btn-action" onclick="handleManualTrade()" ontouchend="handleManualTrade()">
-          ⚡ Executar Arbitragem Agora
-        </button>
-      </div>
-
-      <!-- Feed Rápido -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Atividade em Tempo Real</span>
-          <button onclick="handleClearLogs()" style="background:none; color:#64748B; font-size:10px;">Limpar</button>
-        </div>
-        <div class="terminal" id="terminalFeed">
-          <div class="log-info">[INICIADO] Monitorando liquidez QuickSwap e Uniswap Polygon...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 2: CARTEIRA WEB3 -->
-    <div id="tab2" class="tab-view">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Carteira MetaMask</span>
-        </div>
-        <div style="background:#05070A; padding:12px; border-radius:10px; font-size:11px; margin-bottom:12px; line-height:1.6;">
-          <div style="margin-bottom:6px;">Status: <b id="walletStatusText" style="color:#F59E0B;">Desconectado</b></div>
-          <div style="margin-bottom:6px;">Endereço: <span class="mono" id="walletAddrText" style="color:#94A3B8; font-size:10px;">Nenhum</span></div>
-          <div>Rede: <b style="color:#8247E5;">Polygon Mainnet (PoS)</b></div>
-        </div>
-        <button class="btn-wallet" onclick="executeConnectWallet()" ontouchend="executeConnectWallet()">
-          🦊 Conectar MetaMask Agora
-        </button>
-        <button class="btn-action" style="background:#334155;" onclick="handleSimulateTx()" ontouchend="handleSimulateTx()">
-          🧪 Testar Transação de Arbitragem
-        </button>
-      </div>
-    </div>
-
-    <!-- ABA 3: AJUSTES -->
-    <div id="tab3" class="tab-view">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Configurações de Risco</span>
-        </div>
-        <div style="font-size:12px; margin-bottom:12px;">
-          <label style="display:block; color:#94A3B8; margin-bottom:5px;">Capital Base (USDT):</label>
-          <input type="number" id="inputCapital" value="1000" style="width:100%; background:#05070A; border:1px solid #334155; color:white; padding:10px; border-radius:8px; font-family:monospace;" />
-        </div>
-        <div style="font-size:12px; margin-bottom:10px;">
-          <label style="display:block; color:#94A3B8; margin-bottom:5px;">Meta Diária de Lucro:</label>
-          <div style="color:#10B981; font-weight:bold; margin-bottom:4px; font-size:14px;">0,20% a 0,50%</div>
-          <p style="font-size:10px; color:#64748B; line-height:1.4;">O bot pausa automaticamente ao atingir 0,50% ao dia para proteger seus ganhos.</p>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Navegação Inferior Fixa -->
-  <nav>
-    <button class="nav-btn active" id="navTab1" onclick="openTab('tab1', this)">
-      <span style="font-size:16px;">⚡</span>
-      <span>Radar</span>
-    </button>
-    <button class="nav-btn" id="navTab2" onclick="openTab('tab2', this)">
-      <span style="font-size:16px;">🦊</span>
-      <span>Carteira</span>
-    </button>
-    <button class="nav-btn" id="navTab3" onclick="openTab('tab3', this)">
-      <span style="font-size:16px;">⚙️</span>
-      <span>Ajustes</span>
-    </button>
-  </nav>
-
-  <script>
-    /* ESTADO GLOBAL */
-    var accumulatedProfit = 3.42;
-    var capital = 1000;
-    var userAddress = null;
-
-    /* MUDANÇA DE ABAS */
-    function openTab(tabId, btnElement) {
-      var tabs = document.querySelectorAll('.tab-view');
-      for (var i = 0; i < tabs.length; i++) {
-        tabs[i].classList.remove('active');
-      }
-      var target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
-
-      var navBtns = document.querySelectorAll('.nav-btn');
-      for (var j = 0; j < navBtns.length; j++) {
-        navBtns[j].classList.remove('active');
-      }
-      if (btnElement) btnElement.classList.add('active');
-    }
-
-    /* CONEXÃO COM A METAMASK */
-    async function executeConnectWallet(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      addLog("Iniciando conexão com a carteira...", "info");
-
-      var provider = window.ethereum || (window.web3 && window.web3.currentProvider);
-      if (!provider) {
-        alert("Navegador Web3 não encontrado!\n\nCertifique-se de que está abrindo este link DENTRO da MetaMask (no ícone de Bússola/Navegador).");
-        addLog("Erro: window.ethereum não detectado.", "warn");
-        return;
-      }
-
-      try {
-        var accounts = await provider.request({ method: 'eth_requestAccounts' });
-        if (accounts && accounts.length > 0) {
-          userAddress = accounts[0];
-          var short = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
-          
-          var headerBtn = document.getElementById('btnHeaderConnect');
-          var statusTxt = document.getElementById('walletStatusText');
-          var addrTxt = document.getElementById('walletAddrText');
-
-          if (headerBtn) headerBtn.innerText = short;
-          if (statusTxt) {
-            statusTxt.innerText = "Conectado";
-            statusTxt.style.color = "#10B981";
-          }
-          if (addrTxt) addrTxt.innerText = userAddress;
-
-          alert("Carteira Conectada com Sucesso: " + short);
-          addLog("Carteira conectada: " + short, "success");
-        }
-      } catch (err) {
-        alert("Conexão cancelada: " + (err.message || err));
-        addLog("Conexão cancelada pelo usuário.", "warn");
-      }
-    }
-
-    /* EXECUÇÃO DE ARBITRAGEM MANUAL */
-    function handleManualTrade(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      accumulatedProfit += 0.355;
-      var profitUsdt = document.getElementById('valProfitUsdt');
-      var profitPct = document.getElementById('valProfitPct');
-      var barFill = document.getElementById('barProfitFill');
-
-      var pct = (accumulatedProfit / capital) * 100;
-      if (profitUsdt) profitUsdt.innerText = "+$" + accumulatedProfit.toFixed(2);
-      if (profitPct) profitPct.innerText = "+" + pct.toFixed(3) + "%";
-      if (barFill) barFill.style.width = Math.min(100, (pct / 0.5) * 100) + "%";
-
-      addLog("Arbitragem USDT → WETH → POL executada: +$0.355 USDT (+0.142%)", "success");
-    }
-
-    /* SIMULAR TRANSAÇÃO */
-    function handleSimulateTx(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      alert("Simulação de swap triangular iniciada na rede Polygon!\nTaxa estimada de gas: ~$0.008 (32 Gwei)");
-      addLog("Simulação concluída com sucesso.", "success");
-    }
-
-    /* LOGS NO TERMINAL */
-    function addLog(msg, type) {
-      var terminal = document.getElementById('terminalFeed');
-      if (!terminal) return;
-      var time = new Date().toTimeString().split(' ')[0];
-      var div = document.createElement('div');
-      div.className = type === 'success' ? 'log-success' : (type === 'warn' ? 'log-warn' : 'log-info');
-      div.innerText = "[" + time + "] " + msg;
-      terminal.prepend(div);
-      if (terminal.children.length > 15) {
-        terminal.removeChild(terminal.lastChild);
-      }
-    }
-
-    function handleClearLogs() {
-      var terminal = document.getElementById('terminalFeed');
-      if (terminal) terminal.innerHTML = '<div class="log-info">Logs limpos.</div>';
-    }
-
-    /* Rotação Leve de Cotações a cada 3 segundos */
-    setInterval(function() {
-      var spreadEl = document.getElementById('valSpreadPct');
-      if (spreadEl) {
-        var randomSpread = (0.12 + Math.random() * 0.08).toFixed(3);
-        spreadEl.innerText = "+" + randomSpread + "%";
-      }
-    }, 3000);
-  </script>
+<!-- Notificação Flutuante -->
+<div id="toastBox" class="toast">
+<span id="toastIcon">⚡</span>
+<span id="toastMsg">Operação Concluída</span>
+</div>
+<!-- Header com Seletor Multi-Chain -->
+<header>
+<div class="brand">
+<div class="brand-logo">Δ</div>
+<div class="brand-info">
+<span class="brand-name">ArbTriangulagem DEX</span>
+<div class="chain-badge" id="chainBadgeDisplay">
+<span class="pulsing-dot" style="width:6px; height:6px;"></span>
+<span id="lblCurrentChainName">Polygon (PoS)</span>
+</div>
+</div>
+</div>
+<div class="header-actions">
+<button class="btn-connect-header" id="btnWalletHeader" onclick="handleWalletAction()" ontouchend="handleWalletAction()">
+<span>🦊</span>
+<span id="lblWalletAddressHeader">Conectar</span>
+</button>
+</div>
+</header>
+<!-- Barra de Controle de Execução Automática -->
+<div class="control-bar">
+<div class="engine-status">
+<span id="engineDotStatus" class="pulsing-dot"></span>
+<div>
+<span id="engineTextStatus" style="color:var(--emerald); font-weight:800; font-size:11px;">SCANNER 8 MOEDAS ATIVO</span>
+<span class="mono" style="display:block; font-size:9px; color:var(--text-dim);">Ciclo: <span id="lblScanInterval">2.5s</span> | Multi-DEX</span>
+</div>
+</div>
+<button id="btnEngineToggle" class="btn-engine-toggle running" onclick="toggleEngineState()" ontouchend="toggleEngineState()">
+<span id="btnEngineToggleIcon">⏸</span>
+<span id="btnEngineToggleText">Pausar</span>
+</button>
+</div>
+<!-- Conteúdo Principal -->
+<main>
+<!-- ABA 1: RADAR (Painel em Tempo Real com Multi-DEX) -->
+<div id="tab1" class="tab-content active">
+<!-- Card: Cesta Ouro das 8 Moedas Monitoradas -->
+<div class="card" style="padding-bottom:10px;">
+<div class="card-header" style="margin-bottom:6px;">
+<span class="card-title">
+<span>💎</span> Cesta Ouro: 8 Moedas Seguras
+</span>
+<span class="mono" style="font-size:9px; color:var(--emerald);">ALTA LIQUIDEZ</span>
+</div>
+<div class="tokens-chip-grid" id="tokensChipsContainer">
+<span class="token-chip anchor">⚓ USDT (Base)</span>
+<span class="token-chip" id="chip-POL">🟣 POL</span>
+<span class="token-chip" id="chip-WETH">🔷 WETH</span>
+<span class="token-chip" id="chip-WBTC">₿ WBTC</span>
+<span class="token-chip" id="chip-USDC">💵 USDC</span>
+<span class="token-chip" id="chip-DAI">🪙 DAI</span>
+<span class="token-chip" id="chip-LINK">🔗 LINK</span>
+<span class="token-chip" id="chip-AAVE">👻 AAVE</span>
+</div>
+</div>
+<!-- Card: Lucro Diário & Trava Protetiva -->
+<div class="card">
+<div class="card-header">
+<span class="card-title">
+<span>🛡️</span> Lucro Diário Acumulado (USDT)
+</span>
+<span class="mono" style="font-size:10px; color:var(--amber);" id="lblTargetLimit">TRAVA: 0.20% ~ 0.50%</span>
+</div>
+<div class="profit-row">
+<div>
+<div class="profit-val mono" id="valDailyProfitUsdt">+$3.84 USDT</div>
+<div style="font-size:10px; color:var(--text-dim); margin-top:2px;">
+Banca Operacional: <span class="mono" id="valAllocatedCapitalDisplay" style="color:#FFF;">500.00 USDT</span>
+</div>
+</div>
+<span class="profit-badge mono" id="valDailyProfitPct">+0.384%</span>
+</div>
+<div class="progress-track">
+<div class="progress-fill" id="barDailyProfitFill" style="width: 76.8%;"></div>
+</div>
+<div class="profit-meta-sub">
+<span>0.00%</span>
+<span id="lblGoalStatus">76.8% da Meta Atingida</span>
+<span id="lblTargetMaxDisplay">Teto 0.50%</span>
+</div>
+<!-- Banner de Trava Ativada -->
+<div class="lock-banner" id="bannerCapReached">
+<span>🏆</span>
+<div>
+<strong>Meta Diária Atingida!</strong>
+<div style="font-size:10px; font-weight:normal;">O robô foi pausado automaticamente para proteger o lucro do dia.</div>
+</div>
+</div>
+</div>
+<!-- Card: Circuito Triangular em Tempo Real Multi-DEX -->
+<div class="card">
+<div class="card-header">
+<div>
+<span class="card-title">
+<span>⚡</span> Rota Ativa em Escaneamento
+</span>
+<span class="card-subtitle mono" id="lblActiveRoutePath">USDT → WETH → POL → USDT</span>
+</div>
+<span class="mono" style="font-size:10px; color:#A78BFA;" id="lblSelectedNetworkTag">POLYGON</span>
+</div>
+<!-- Triângulo Visual Interativo -->
+<div class="triangle-canvas">
+<svg class="triangle-svg" viewBox="0 0 320 175">
+<line x1="50" y1="135" x2="160" y2="40" stroke="#8247E5" stroke-width="2" stroke-dasharray="4,4" />
+<line x1="160" y1="40" x2="270" y2="135" stroke="#10B981" stroke-width="2" stroke-dasharray="4,4" />
+<line x1="270" y1="135" x2="50" y2="135" stroke="#06B6D4" stroke-width="2" stroke-dasharray="4,4" />
+</svg>
+<!-- Vértice 1: USDT (Base) -->
+<div class="node-pill node-a">
+<span class="mono">USDT</span>
+<span class="node-sub">Origem</span>
+</div>
+<!-- Vértice 2: Token B -->
+<div class="node-pill node-b">
+<span class="mono" id="nodeTokenB">WETH</span>
+<span class="node-sub">Perna 1</span>
+</div>
+<!-- Vértice 3: Token C -->
+<div class="node-pill node-c">
+<span class="mono" id="nodeTokenC">POL</span>
+<span class="node-sub">Perna 2</span>
+</div>
+<!-- Centro: Spread e Lucro Estimado -->
+<div class="center-spread-box">
+<div class="spread-title">Spread Líquido</div>
+<div class="spread-number mono" id="valCenterSpreadPct">+0.165%</div>
+<div class="spread-sub mono" id="valCenterProfitUsdt">+$0.825 USDT</div>
+</div>
+</div>
+<!-- Tags de DEXs Utilizadas na Rota -->
+<div class="dex-path-tags">
+<div class="dex-tag">
+<span>1ª DEX</span>
+<strong id="lblDexLeg1">QuickSwap</strong>
+</div>
+<div class="dex-tag">
+<span>2ª DEX</span>
+<strong id="lblDexLeg2">Uniswap v3</strong>
+</div>
+<div class="dex-tag">
+<span>3ª DEX</span>
+<strong id="lblDexLeg3">SushiSwap</strong>
+</div>
+</div>
+<!-- Botão de Disparo Manual de Teste -->
+<button style="width:100%; background:#8247E5; color:#FFF; font-size:12px; font-weight:800; padding:12px; border-radius:10px; margin-top:10px;" onclick="handleManualTrade()" ontouchend="handleManualTrade()">
+⚡ Executar Oportunidade Atual Agora
+</button>
+</div>
+<!-- Feed ao Vivo de Atividade -->
+<div class="card">
+<div class="card-header">
+<span class="card-title">
+<span>📋</span> Auditoria e Execuções em Tempo Real
+</span>
+<button onclick="clearTerminalLogs()" ontouchend="clearTerminalLogs()" style="background:none; color:var(--text-dim); font-size:10px;">Limpar</button>
+</div>
+<div class="terminal-box" id="terminalFeed">
+<div class="log-row log-info">[INICIALIZADO] Motor ativado monitorando as 8 moedas blue-chip da Polygon...</div>
+</div>
+</div>
+</div>
+<!-- ABA 2: ROTAS (Scanner Multi-DEX das 8 Moedas) -->
+<div id="tab2" class="tab-content">
+<div class="card">
+<div class="card-header">
+<span class="card-title">Rotas Triangulares Multi-Pares</span>
+<span class="mono" style="font-size:10px; color:var(--primary);" id="lblTotalRoutesCount">14 Rotas</span>
+</div>
+<div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+Circuitos combinatórios formados entre as 8 moedas de alta liquidez com retorno em USDT:
+</div>
+<div id="routesListContainer">
+<!-- Renderizado via JavaScript dinamicamente -->
+</div>
+</div>
+</div>
+<!-- ABA 3: AJUSTES (Gestão de Capital, Meta Diária e Multi-Chain) -->
+<div id="tab3" class="tab-content">
+<!-- Seção: Multi-Chain -->
+<div class="card">
+<div class="card-header">
+<span class="card-title">🌐 Rede Blockchain (Multi-Chain)</span>
+<span class="mono" style="font-size:9px; color:var(--emerald);">AUTO-SWITCH</span>
+</div>
+<div class="setting-group">
+<label class="setting-label">Selecione a Rede de Operação:</label>
+<select id="selectNetwork" class="input-box" onchange="changeNetwork(this.value)">
+<option value="polygon" selected>Polygon PoS (Gas ~$0.008 | Recomendado)</option>
+<option value="arbitrum">Arbitrum One (Gas ~$0.02)</option>
+<option value="bsc">BNB Smart Chain (Gas ~$0.05)</option>
+<option value="base">Base Coinbase (Gas ~$0.01)</option>
+<option value="optimism">Optimism Mainnet (Gas ~$0.02)</option>
+<option value="ethereum">Ethereum Mainnet (Alta Liquidez)</option>
+</select>
+</div>
+</div>
+<!-- Seção: Alocação de Capital da Carteira -->
+<div class="card">
+<div class="card-header">
+<span class="card-title">💰 Dimensionamento de Capital (USDT)</span>
+<span class="mono" style="font-size:10px; color:var(--emerald);" id="lblWalletUsdtBalanceCard">Saldo: 1.000,00 USDT</span>
+</div>
+<!-- Seletor de Modo: Valor Fixo vs Alavanca Percentual -->
+<div class="mode-switcher">
+<button id="btnModeFixed" class="mode-btn active" onclick="setCapitalMode('fixed')" ontouchend="setCapitalMode('fixed')">
+Valor Fixo (USDT)
+</button>
+<button id="btnModePercent" class="mode-btn" onclick="setCapitalMode('percent')" ontouchend="setCapitalMode('percent')">
+Alavanca (% Carteira)
+</button>
+</div>
+<!-- Opção A: Valor Fixo Personalizado -->
+<div id="boxFixedCapital" class="setting-group">
+<div class="setting-label">
+<span>Capital a Usar por Ciclo (USDT):</span>
+<span class="highlight mono" id="lblFixedCapitalVal">500.00 USDT</span>
+</div>
+<input type="number" id="inputFixedCapital" class="input-box mono" value="500" min="10" step="25" oninput="updateCapitalFromInput(this.value)" />
+<span style="font-size:9px; color:var(--text-dim); display:block; margin-top:4px;">
+Digite qualquer valor da sua carteira que você queira alocar nas arbitragens.
+</span>
+</div>
+<!-- Opção B: Alavanca Percentual (0% a 100%) -->
+<div id="boxPercentCapital" class="setting-group" style="display:none;">
+<div class="setting-label">
+<span>Alavanca Percentual da Carteira:</span>
+<span class="highlight mono" id="lblPercentVal">50% (~500.00 USDT)</span>
+</div>
+<input type="range" id="sliderPercentCapital" class="slider-range" min="5" max="100" step="5" value="50" oninput="updateCapitalFromSlider(this.value)" />
+<div class="quick-pct-row">
+<button class="quick-pct-btn" onclick="setSliderPreset(10)" ontouchend="setSliderPreset(10)">10%</button>
+<button class="quick-pct-btn" onclick="setSliderPreset(25)" ontouchend="setSliderPreset(25)">25%</button>
+<button class="quick-pct-btn" onclick="setSliderPreset(50)" ontouchend="setSliderPreset(50)">50%</button>
+<button class="quick-pct-btn" onclick="setSliderPreset(75)" ontouchend="setSliderPreset(75)">75%</button>
+<button class="quick-pct-btn" onclick="setSliderPreset(100)" ontouchend="setSliderPreset(100)">100%</button>
+</div>
+<span style="font-size:9px; color:var(--text-dim); display:block; margin-top:6px;">
+Calcula dinamicamente a ordem baseado no saldo USDT real da sua carteira.
+</span>
+</div>
+</div>
+<!-- Seção: Trava de Segurança e Lucro Diário -->
+<div class="card">
+<div class="card-header">
+<span class="card-title">🛡️ Trava de Lucro Diário & Risco</span>
+<span class="mono" style="font-size:10px; color:var(--amber);">PROTEÇÃO ATIVA</span>
+</div>
+<div class="setting-group">
+<div class="setting-label">
+<span>Meta Máxima Diária (Trava do Bot):</span>
+<span class="highlight mono" id="lblTargetMaxSet">0.50% ao dia</span>
+</div>
+<select id="selectDailyTarget" class="input-box" onchange="changeDailyTarget(this.value)">
+<option value="0.20">0,20% ao dia (Modo Ultra Conservador)</option>
+<option value="0.35">0,35% ao dia (Modo Moderado)</option>
+<option value="0.50" selected>0,50% ao dia (Recomendado Padrão)</option>
+<option value="0.75">0,75% ao dia (Modo Dinâmico)</option>
+<option value="1.00">1,00% ao dia (Teto Máximo)</option>
+</select>
+<span style="font-size:9px; color:var(--text-dim); display:block; margin-top:4px;">
+Ao atingir esse lucro sobre a banca, o robô bloqueia novas entradas para proteger os ganhos.
+</span>
+</div>
+<div class="setting-group">
+<div class="setting-label">
+<span>Spread Líquido Mínimo para Disparo:</span>
+<span class="highlight mono" id="lblMinSpreadSet">0.08% líq</span>
+</div>
+<input type="range" id="sliderMinSpread" class="slider-range" min="0.04" max="0.30" step="0.01" value="0.08" oninput="updateMinSpread(this.value)" />
+</div>
+</div>
+</div>
+<!-- ABA 4: CARTEIRA WEB3 (Conexão e Saldos) -->
+<div id="tab4" class="tab-content">
+<div class="card">
+<div class="card-header">
+<span class="card-title">Carteira Web3 Conectada</span>
+</div>
+<div style="background:var(--card-inner); padding:12px; border-radius:10px; font-size:11px; margin-bottom:12px; line-height:1.7;">
+<div>Status: <b id="walletDetailStatus" style="color:var(--amber);">Desconectado</b></div>
+<div>Endereço: <span class="mono" id="walletDetailAddress" style="color:var(--text-muted); font-size:10px;">Nenhum</span></div>
+<div>Rede Ativa: <b id="walletDetailNetwork" style="color:var(--primary);">Polygon PoS</b></div>
+<div>Saldo Gas: <span class="mono" id="walletDetailGas" style="color:#38BDF8;">0.00 POL</span></div>
+<div>Saldo USDT: <span class="mono" id="walletDetailUsdt" style="color:var(--emerald); font-weight:bold;">1.000,00 USDT</span></div>
+</div>
+<button style="width:100%; background:#F97316; color:#FFF; font-weight:800; font-size:13px; padding:12px; border-radius:10px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="handleConnectWalletExplicit()" ontouchend="handleConnectWalletExplicit()">
+<span>🦊</span>
+<span id="btnConnectWalletDetailsText">Conectar / Trocar Carteira</span>
+</button>
+<button style="width:100%; background:#1E293B; color:#CBD5E1; font-weight:700; font-size:11px; padding:10px; border-radius:8px; border:1px solid #334155;" onclick="simulateWalletBalanceRefresh()" ontouchend="simulateWalletBalanceRefresh()">
+🔄 Atualizar Saldos On-Chain
+</button>
+</div>
+</div>
+</main>
+<!-- Navegação Inferior Fixa -->
+<nav>
+<button class="nav-item active" id="navBtnTab1" onclick="switchNavTab('tab1', this)" ontouchend="switchNavTab('tab1', this)">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+<span>Radar</span>
+</button>
+<button class="nav-item" id="navBtnTab2" onclick="switchNavTab('tab2', this)" ontouchend="switchNavTab('tab2', this)">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+<span>Rotas</span>
+</button>
+<button class="nav-item" id="navBtnTab3" onclick="switchNavTab('tab3', this)" ontouchend="switchNavTab('tab3', this)">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+<span>Ajustes</span>
+</button>
+<button class="nav-item" id="navBtnTab4" onclick="switchNavTab('tab4', this)" ontouchend="switchNavTab('tab4', this)">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+<span>Carteira</span>
+</button>
+</nav>
+<!-- LÓGICA DO MOTOR EM JAVASCRIPT PURO -->
+<script>
+var appState = {
+isEngineRunning: true,
+currentNetwork: 'polygon',
+userAddress: null,
+walletUsdtBalance: 1000.0,
+walletGasBalance: 1.45,
+capitalMode: 'fixed',
+fixedCapitalUsdt: 500.0,
+percentCapital: 50,
+effectiveCapitalUsdt: 500.0,
+targetDailyCapPct: 0.50,
+minSpreadThreshold: 0.08,
+accumulatedDailyProfitUsdt: 3.84,
+isCapLocked: false,
+activeRouteIndex: 0,
+scanIntervalMs: 2500,
+engineTimer: null
+};
+/* Cesta das 8 Moedas Blue-Chip da Polygon e Configurações Multi-Chain */
+var NETWORK_CONFIGS = {
+polygon: {
+chainId: '0x89',
+name: 'Polygon PoS',
+gasToken: 'POL',
+avgGasUsdt: 0.008,
+// Conjunto de circuitos formados exclusivamente pelas 8 moedas auditadas
+routes: [
+{ name: 'USDT → WETH → POL → USDT', tokenB: 'WETH', tokenC: 'POL', dex1: 'QuickSwap v3', dex2: 'Uniswap v3', dex3: 'SushiSwap', baseSpread: 0.165 },
+{ name: 'USDT → WBTC → WETH → USDT', tokenB: 'WBTC', tokenC: 'WETH', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'Balancer v2', baseSpread: 0.142 },
+{ name: 'USDT → LINK → POL → USDT', tokenB: 'LINK', tokenC: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 0.188 },
+{ name: 'USDT → AAVE → WETH → USDT', tokenB: 'AAVE', tokenC: 'WETH', dex1: 'QuickSwap v3', dex2: 'SushiSwap', dex3: 'Uniswap v3', baseSpread: 0.195 },
+{ name: 'USDT → USDC → POL → USDT', tokenB: 'USDC', tokenC: 'POL', dex1: 'Balancer v2', dex2: 'QuickSwap v3', dex3: 'Uniswap v3', baseSpread: 0.098 },
+{ name: 'USDT → DAI → WETH → USDT', tokenB: 'DAI', tokenC: 'WETH', dex1: 'QuickSwap v3', dex2: 'SushiSwap', dex3: 'Uniswap v3', baseSpread: 0.104 },
+{ name: 'USDT → WBTC → POL → USDT', tokenB: 'WBTC', tokenC: 'POL', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'QuickSwap v3', baseSpread: 0.156 },
+{ name: 'USDT → LINK → WETH → USDT', tokenB: 'LINK', tokenC: 'WETH', dex1: 'QuickSwap v3', dex2: 'Uniswap v3', dex3: 'Balancer v2', baseSpread: 0.172 },
+{ name: 'USDT → AAVE → POL → USDT', tokenB: 'AAVE', tokenC: 'POL', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'SushiSwap', baseSpread: 0.184 },
+{ name: 'USDT → USDC → WETH → USDT', tokenB: 'USDC', tokenC: 'WETH', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'SushiSwap', baseSpread: 0.092 },
+{ name: 'USDT → DAI → POL → USDT', tokenB: 'DAI', tokenC: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 0.088 },
+{ name: 'USDT → POL → WBTC → USDT', tokenB: 'POL', tokenC: 'WBTC', dex1: 'QuickSwap v3', dex2: 'Balancer v2', dex3: 'Uniswap v3', baseSpread: 0.148 },
+{ name: 'USDT → WETH → LINK → USDT', tokenB: 'WETH', tokenC: 'LINK', dex1: 'SushiSwap', dex2: 'QuickSwap v3', dex3: 'Uniswap v3', baseSpread: 0.160 },
+{ name: 'USDT → POL → AAVE → USDT', tokenB: 'POL', tokenC: 'AAVE', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'QuickSwap v3', baseSpread: 0.178 }
+]
+},
+arbitrum: {
+chainId: '0xa4b1',
+name: 'Arbitrum One',
+gasToken: 'ETH',
+avgGasUsdt: 0.022,
+routes: [
+{ name: 'USDT → WETH → ARB → USDT', tokenB: 'WETH', tokenC: 'ARB', dex1: 'Camelot DEX', dex2: 'Uniswap v3', dex3: 'Trader Joe', baseSpread: 0.182 },
+{ name: 'USDT → WBTC → WETH → USDT', tokenB: 'WBTC', tokenC: 'WETH', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'Camelot DEX', baseSpread: 0.145 },
+{ name: 'USDT → USDC.e → ARB → USDT', tokenB: 'USDC.e', tokenC: 'ARB', dex1: 'Camelot DEX', dex2: 'Balancer', dex3: 'Uniswap v3', baseSpread: 0.112 }
+]
+},
+bsc: {
+chainId: '0x38',
+name: 'BNB Smart Chain',
+gasToken: 'BNB',
+avgGasUsdt: 0.045,
+routes: [
+{ name: 'USDT → WBNB → CAKE → USDT', tokenB: 'WBNB', tokenC: 'CAKE', dex1: 'PancakeSwap v3', dex2: 'BiSwap', dex3: 'Thena', baseSpread: 0.155 },
+{ name: 'USDT → BTCB → WBNB → USDT', tokenB: 'BTCB', tokenC: 'WBNB', dex1: 'PancakeSwap v3', dex2: 'Thena', dex3: 'BiSwap', baseSpread: 0.128 },
+{ name: 'USDT → BUSD → WBNB → USDT', tokenB: 'BUSD', tokenC: 'WBNB', dex1: 'BiSwap', dex2: 'PancakeSwap v3', dex3: 'ApeSwap', baseSpread: 0.089 }
+]
+},
+base: {
+chainId: '0x2105',
+name: 'Base Coinbase',
+gasToken: 'ETH',
+avgGasUsdt: 0.012,
+routes: [
+{ name: 'USDT → WETH → AERO → USDT', tokenB: 'WETH', tokenC: 'AERO', dex1: 'Aerodrome', dex2: 'Uniswap v3', dex3: 'BaseSwap', baseSpread: 0.195 },
+{ name: 'USDT → cbBTC → WETH → USDT', tokenB: 'cbBTC', tokenC: 'WETH', dex1: 'Aerodrome', dex2: 'Uniswap v3', dex3: 'Maverick', baseSpread: 0.142 }
+]
+},
+optimism: {
+chainId: '0xa',
+name: 'Optimism Mainnet',
+gasToken: 'ETH',
+avgGasUsdt: 0.020,
+routes: [
+{ name: 'USDT → WETH → OP → USDT', tokenB: 'WETH', tokenC: 'OP', dex1: 'Velodrome', dex2: 'Uniswap v3', dex3: 'Beethoven X', baseSpread: 0.174 },
+{ name: 'USDT → WBTC → WETH → USDT', tokenB: 'WBTC', tokenC: 'WETH', dex1: 'Uniswap v3', dex2: 'Velodrome', dex3: 'Synthetix', baseSpread: 0.130 }
+]
+},
+ethereum: {
+chainId: '0x1',
+name: 'Ethereum Mainnet',
+gasToken: 'ETH',
+avgGasUsdt: 1.85,
+routes: [
+{ name: 'USDT → WETH → WBTC → USDT', tokenB: 'WETH', tokenC: 'WBTC', dex1: 'Uniswap v3', dex2: 'Curve Finance', dex3: 'SushiSwap', baseSpread: 0.285 }
+]
+}
+};
+function switchNavTab(targetTabId, btnEl) {
+var tabs = document.querySelectorAll('.tab-content');
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].classList.remove('active');
+}
+var activeTab = document.getElementById(targetTabId);
+if (activeTab) activeTab.classList.add('active');
+var navBtns = document.querySelectorAll('.nav-item');
+for (var j = 0; j < navBtns.length; j++) {
+navBtns[j].classList.remove('active');
+}
+if (btnEl) btnEl.classList.add('active');
+}
+function showToastNotification(msg, icon) {
+var toast = document.getElementById('toastBox');
+var iconEl = document.getElementById('toastIcon');
+var msgEl = document.getElementById('toastMsg');
+if (!toast) return;
+iconEl.innerText = icon || '⚡';
+msgEl.innerText = msg;
+toast.style.display = 'flex';
+setTimeout(function() {
+toast.style.display = 'none';
+}, 3000);
+}
+function recalculateEffectiveCapital() {
+if (appState.capitalMode === 'fixed') {
+appState.effectiveCapitalUsdt = Math.min(appState.walletUsdtBalance, Math.max(10, appState.fixedCapitalUsdt));
+} else {
+appState.effectiveCapitalUsdt = (appState.walletUsdtBalance * (appState.percentCapital / 100));
+}
+var displayCap = document.getElementById('valAllocatedCapitalDisplay');
+if (displayCap) displayCap.innerText = appState.effectiveCapitalUsdt.toFixed(2) + ' USDT';
+updateProfitMetrics();
+}
+function setCapitalMode(mode) {
+appState.capitalMode = mode;
+var btnFixed = document.getElementById('btnModeFixed');
+var btnPercent = document.getElementById('btnModePercent');
+var boxFixed = document.getElementById('boxFixedCapital');
+var boxPercent = document.getElementById('boxPercentCapital');
+if (mode === 'fixed') {
+btnFixed.classList.add('active');
+btnPercent.classList.remove('active');
+boxFixed.style.display = 'block';
+boxPercent.style.display = 'none';
+showToastNotification('Modo Capital Fixo ativado: ' + appState.fixedCapitalUsdt + ' USDT', '💵');
+} else {
+btnPercent.classList.add('active');
+btnFixed.classList.remove('active');
+boxPercent.style.display = 'block';
+boxFixed.style.display = 'none';
+showToastNotification('Modo Alavanca Percentual: ' + appState.percentCapital + '%', '📊');
+}
+recalculateEffectiveCapital();
+}
+function updateCapitalFromInput(val) {
+var num = parseFloat(val) || 50;
+appState.fixedCapitalUsdt = num;
+var lbl = document.getElementById('lblFixedCapitalVal');
+if (lbl) lbl.innerText = num.toFixed(2) + ' USDT';
+recalculateEffectiveCapital();
+}
+function updateCapitalFromSlider(val) {
+var num = parseInt(val, 10) || 50;
+appState.percentCapital = num;
+var approx = (appState.walletUsdtBalance * (num / 100)).toFixed(2);
+var lbl = document.getElementById('lblPercentVal');
+if (lbl) lbl.innerText = num + '% (~' + approx + ' USDT)';
+recalculateEffectiveCapital();
+}
+function setSliderPreset(pct) {
+var slider = document.getElementById('sliderPercentCapital');
+if (slider) slider.value = pct;
+updateCapitalFromSlider(pct);
+}
+function updateProfitMetrics() {
+var currentCap = appState.effectiveCapitalUsdt > 0 ? appState.effectiveCapitalUsdt : 500;
+var roiPct = (appState.accumulatedDailyProfitUsdt / currentCap) * 100;
+var valProfit = document.getElementById('valDailyProfitUsdt');
+var valPct = document.getElementById('valDailyProfitPct');
+var barFill = document.getElementById('barDailyProfitFill');
+var lblStatus = document.getElementById('lblGoalStatus');
+var banner = document.getElementById('bannerCapReached');
+if (valProfit) valProfit.innerText = '+$' + appState.accumulatedDailyProfitUsdt.toFixed(2) + ' USDT';
+if (valPct) valPct.innerText = '+' + roiPct.toFixed(3) + '%';
+var progressOfTarget = Math.min(100, (roiPct / appState.targetDailyCapPct) * 100);
+if (barFill) barFill.style.width = progressOfTarget.toFixed(1) + '%';
+if (lblStatus) lblStatus.innerText = progressOfTarget.toFixed(1) + '% da Meta (' + appState.targetDailyCapPct.toFixed(2) + '%)';
+// Checagem de Trava de Proteção Diária
+if (roiPct >= appState.targetDailyCapPct) {
+if (!appState.isCapLocked) {
+appState.isCapLocked = true;
+appState.isEngineRunning = false;
+updateEngineStatusUI();
+if (banner) banner.style.display = 'flex';
+addTerminalLog('🛡️ TRAVA ATIVADA: Meta diária de ' + appState.targetDailyCapPct.toFixed(2) + '% atingida! Robô pausado para proteger o capital.', 'warn');
+showToastNotification('Meta Batida! Capital Protegido.', '🏆');
+}
+} else {
+if (banner) banner.style.display = 'none';
+}
+}
+function changeDailyTarget(val) {
+var target = parseFloat(val) || 0.50;
+appState.targetDailyCapPct = target;
+var lbl = document.getElementById('lblTargetLimit');
+var lblSet = document.getElementById('lblTargetMaxSet');
+var lblMax = document.getElementById('lblTargetMaxDisplay');
+if (lbl) lbl.innerText = 'TRAVA: ' + target.toFixed(2) + '% AO DIA';
+if (lblSet) lblSet.innerText = target.toFixed(2) + '% ao dia';
+if (lblMax) lblMax.innerText = 'Teto ' + target.toFixed(2) + '%';
+appState.isCapLocked = false;
+updateProfitMetrics();
+showToastNotification('Meta Diária ajustada para ' + target.toFixed(2) + '%', '🛡️');
+}
+function updateMinSpread(val) {
+var num = parseFloat(val) || 0.08;
+appState.minSpreadThreshold = num;
+var lbl = document.getElementById('lblMinSpreadSet');
+if (lbl) lbl.innerText = num.toFixed(2) + '% líq';
+}
+function toggleEngineState() {
+if (appState.isCapLocked) {
+appState.isCapLocked = false;
+var banner = document.getElementById('bannerCapReached');
+if (banner) banner.style.display = 'none';
+addTerminalLog('Trava de lucro diário resetada manualmente pelo operador.', 'info');
+}
+appState.isEngineRunning = !appState.isEngineRunning;
+updateEngineStatusUI();
+if (appState.isEngineRunning) {
+addTerminalLog('Scanner das 8 moedas REINICIADO. Varrendo livros de liquidez...', 'success');
+showToastNotification('Scanner de 8 Moedas Iniciado', '▶️');
+startEngineLoop();
+} else {
+addTerminalLog('Scanner pausado pelo operador.', 'warn');
+showToastNotification('Motor Pausado', '⏸');
+stopEngineLoop();
+}
+}
+function updateEngineStatusUI() {
+var btn = document.getElementById('btnEngineToggle');
+var icon = document.getElementById('btnEngineToggleIcon');
+var txt = document.getElementById('btnEngineToggleText');
+var dot = document.getElementById('engineDotStatus');
+var statusTxt = document.getElementById('engineTextStatus');
+if (appState.isEngineRunning) {
+if (btn) btn.className = 'btn-engine-toggle running';
+if (icon) icon.innerText = '⏸';
+if (txt) txt.innerText = 'Pausar';
+if (dot) dot.className = 'pulsing-dot';
+if (statusTxt) {
+statusTxt.innerText = 'SCANNER 8 MOEDAS ATIVO';
+statusTxt.style.color = 'var(--emerald)';
+}
+} else {
+if (btn) btn.className = 'btn-engine-toggle paused';
+if (icon) icon.innerText = '▶';
+if (txt) txt.innerText = 'Iniciar';
+if (dot) dot.className = 'paused-dot';
+if (statusTxt) {
+statusTxt.innerText = 'SCANNER PAUSADO';
+statusTxt.style.color = 'var(--amber)';
+}
+}
+}
+function startEngineLoop() {
+if (appState.engineTimer) clearInterval(appState.engineTimer);
+appState.engineTimer = setInterval(scanAndExecuteTick, appState.scanIntervalMs);
+}
+function stopEngineLoop() {
+if (appState.engineTimer) {
+clearInterval(appState.engineTimer);
+appState.engineTimer = null;
+}
+}
+/* Ciclo Automático em Tempo Real */
+function scanAndExecuteTick() {
+if (!appState.isEngineRunning || appState.isCapLocked) return;
+var currentCfg = NETWORK_CONFIGS[appState.currentNetwork] || NETWORK_CONFIGS.polygon;
+var routes = currentCfg.routes;
+if (!routes || routes.length === 0) return;
+// Avança pela malha combinatória de rotas
+appState.activeRouteIndex = (appState.activeRouteIndex + 1) % routes.length;
+var activeRoute = routes[appState.activeRouteIndex];
+// Destaque visual dos chips de tokens ativos
+highlightActiveTokenChips(activeRoute.tokenB, activeRoute.tokenC);
+// Flutuação realista de mercado em tempo real
+var noise = (Math.random() * 0.06) - 0.025;
+var liveGrossSpread = Math.max(0.015, activeRoute.baseSpread + noise);
+var gasUsdt = currentCfg.avgGasUsdt;
+var grossProfitUsdt = appState.effectiveCapitalUsdt * (liveGrossSpread / 100);
+var netProfitUsdt = grossProfitUsdt - gasUsdt;
+var netSpreadPct = (netProfitUsdt / appState.effectiveCapitalUsdt) * 100;
+// Atualiza visualização no Radar
+updateRadarVisual(activeRoute, netSpreadPct, netProfitUsdt);
+renderRoutesList(routes, appState.activeRouteIndex);
+// Disparo quando o spread atinge o limiar
+if (netSpreadPct >= appState.minSpreadThreshold) {
+executeArbitrageTrade(activeRoute, netProfitUsdt, netSpreadPct);
+}
+}
+function highlightActiveTokenChips(tokenB, tokenC) {
+var allChips = document.querySelectorAll('.token-chip:not(.anchor)');
+allChips.forEach(function(c) { c.classList.remove('active-scan'); });
+var chipB = document.getElementById('chip-' + tokenB);
+var chipC = document.getElementById('chip-' + tokenC);
+if (chipB) chipB.classList.add('active-scan');
+if (chipC) chipC.classList.add('active-scan');
+}
+/* Atualização dos elementos gráficos do Radar */
+function updateRadarVisual(route, netSpread, netProfit) {
+var pathLbl = document.getElementById('lblActiveRoutePath');
+var nodeB = document.getElementById('nodeTokenB');
+var nodeC = document.getElementById('nodeTokenC');
+var spreadCenter = document.getElementById('valCenterSpreadPct');
+var profitCenter = document.getElementById('valCenterProfitUsdt');
+var leg1 = document.getElementById('lblDexLeg1');
+var leg2 = document.getElementById('lblDexLeg2');
+var leg3 = document.getElementById('lblDexLeg3');
+if (pathLbl) pathLbl.innerText = route.name;
+if (nodeB) nodeB.innerText = route.tokenB;
+if (nodeC) nodeC.innerText = route.tokenC;
+if (spreadCenter) {
+spreadCenter.innerText = (netSpread >= 0 ? '+' : '') + netSpread.toFixed(3) + '%';
+spreadCenter.style.color = netSpread >= appState.minSpreadThreshold ? 'var(--emerald)' : 'var(--amber)';
+}
+if (profitCenter) {
+profitCenter.innerText = (netProfit >= 0 ? '+' : '-') + Math.abs(netProfit).toFixed(3) + ' USDT';
+}
+if (leg1) leg1.innerText = route.dex1;
+if (leg2) leg2.innerText = route.dex2;
+if (leg3) leg3.innerText = route.dex3;
+}
+/* Execução da Operação */
+function executeArbitrageTrade(route, netProfitUsdt, netSpreadPct) {
+if (appState.isCapLocked) return;
+appState.accumulatedDailyProfitUsdt += netProfitUsdt;
+updateProfitMetrics();
+var hash = '0x' + Array.from({length: 8}, function() { return Math.floor(Math.random()*16).toString(16); }).join('') + '...';
+var logMsg = 'OPORTUNIDADE CAPTURADA: ' + route.name + ' [' + route.dex1 + ' → ' + route.dex2 + ' → ' + route.dex3 + ']: Retorno +' + netProfitUsdt.toFixed(3) + ' USDT (' + netSpreadPct.toFixed(3) + '% líq) [Hash: ' + hash + ']';
+addTerminalLog(logMsg, 'success');
+showToastNotification('Lucro Gerado: +' + netProfitUsdt.toFixed(3) + ' USDT', '💰');
+}
+function handleManualTrade() {
+var currentCfg = NETWORK_CONFIGS[appState.currentNetwork] || NETWORK_CONFIGS.polygon;
+var activeRoute = currentCfg.routes[appState.activeRouteIndex] || currentCfg.routes[0];
+var profit = (appState.effectiveCapitalUsdt * (activeRoute.baseSpread / 100)) - currentCfg.avgGasUsdt;
+executeArbitrageTrade(activeRoute, profit, activeRoute.baseSpread);
+}
+function renderRoutesList(routes, currentIndex) {
+var container = document.getElementById('routesListContainer');
+if (!container) return;
+var html = '';
+for (var i = 0; i < routes.length; i++) {
+var r = routes[i];
+var isCurrent = (i === currentIndex);
+var estUsdt = (appState.effectiveCapitalUsdt * (r.baseSpread / 100)).toFixed(3);
+html += '<div class="route-item ' + (isCurrent ? 'best' : '') + '">';
+html += '  <div>';
+html += '    <div class="route-title">' + (isCurrent ? '⚡ ' : '') + r.name + '</div>';
+html += '    <div class="route-dexes mono">DEXs: ' + r.dex1 + ' → ' + r.dex2 + ' → ' + r.dex3 + '</div>';
+html += '  </div>';
+html += '  <div class="route-spread">';
+html += '    <div class="route-pct mono">+' + r.baseSpread.toFixed(3) + '%</div>';
+html += '    <div class="route-est mono">+$' + estUsdt + ' USDT</div>';
+html += '  </div>';
+html += '</div>';
+}
+container.innerHTML = html;
+var countEl = document.getElementById('lblTotalRoutesCount');
+if (countEl) countEl.innerText = routes.length + ' Rotas';
+}
+async function changeNetwork(networkKey) {
+if (!NETWORK_CONFIGS[networkKey]) return;
+appState.currentNetwork = networkKey;
+var cfg = NETWORK_CONFIGS[networkKey];
+var badgeName = document.getElementById('lblCurrentChainName');
+var netTag = document.getElementById('lblSelectedNetworkTag');
+var detailNet = document.getElementById('walletDetailNetwork');
+if (badgeName) badgeName.innerText = cfg.name;
+if (netTag) netTag.innerText = networkKey.toUpperCase();
+if (detailNet) detailNet.innerText = cfg.name;
+addTerminalLog('Rede alterada para: ' + cfg.name + ' (Gas: ~$' + cfg.avgGasUsdt + ' USDT).', 'info');
+showToastNotification('Conectado à rede ' + cfg.name, '🌐');
+var provider = window.ethereum || (window.web3 && window.web3.currentProvider);
+if (provider && appState.userAddress) {
+try {
+await provider.request({
+method: 'wallet_switchEthereumChain',
+params: [{ chainId: cfg.chainId }]
+});
+addTerminalLog('MetaMask sincronizada com ' + cfg.name, 'success');
+} catch (switchErr) {
+addTerminalLog('Aviso: Troque a rede ' + cfg.name + ' na sua MetaMask se necessário.', 'warn');
+}
+}
+appState.activeRouteIndex = 0;
+renderRoutesList(cfg.routes, 0);
+}
+async function handleWalletAction() {
+if (appState.userAddress) {
+switchNavTab('tab4', document.getElementById('navBtnTab4'));
+} else {
+await executeWalletConnect();
+}
+}
+async function handleConnectWalletExplicit() {
+await executeWalletConnect();
+}
+async function executeWalletConnect() {
+addTerminalLog('Iniciando conexão Web3 na rede ' + NETWORK_CONFIGS[appState.currentNetwork].name + '...', 'info');
+var provider = window.ethereum || (window.web3 && window.web3.currentProvider);
+if (!provider) {
+showToastNotification('Abra no navegador interno da MetaMask!', '🦊');
+addTerminalLog('Provedor Web3 não detectado. Abra pelo ícone de bússola na MetaMask.', 'warn');
+return;
+}
+try {
+var accounts = await provider.request({ method: 'eth_requestAccounts' });
+if (accounts && accounts.length > 0) {
+appState.userAddress = accounts[0];
+var short = appState.userAddress.substring(0, 6) + '...' + appState.userAddress.substring(appState.userAddress.length - 4);
+var btnHeader = document.getElementById('btnWalletHeader');
+var lblAddr = document.getElementById('lblWalletAddressHeader');
+var detStatus = document.getElementById('walletDetailStatus');
+var detAddr = document.getElementById('walletDetailAddress');
+var detBtnTxt = document.getElementById('btnConnectWalletDetailsText');
+if (btnHeader) btnHeader.classList.add('connected');
+if (lblAddr) lblAddr.innerText = short;
+if (detStatus) {
+detStatus.innerText = 'Conectado (Web3 Live)';
+detStatus.style.color = 'var(--emerald)';
+}
+if (detAddr) detAddr.innerText = appState.userAddress;
+if (detBtnTxt) detBtnTxt.innerText = 'Carteira: ' + short;
+showToastNotification('Carteira Conectada: ' + short, '🦊');
+addTerminalLog('Carteira conectada: ' + appState.userAddress, 'success');
+}
+} catch (err) {
+addTerminalLog('Falha ou cancelamento na conexão: ' + (err.message || err), 'warn');
+}
+}
+function simulateWalletBalanceRefresh() {
+showToastNotification('Saldos atualizados na rede ' + NETWORK_CONFIGS[appState.currentNetwork].name, '🔄');
+addTerminalLog('Saldos e alocações sincronizados com a blockchain.', 'info');
+recalculateEffectiveCapital();
+}
+/* Funções de Log no Terminal */
+function addTerminalLog(msg, type) {
+var terminal = document.getElementById('terminalFeed');
+if (!terminal) return;
+var time = new Date().toTimeString().split(' ')[0];
+var div = document.createElement('div');
+var cssClass = 'log-info';
+if (type === 'success') cssClass = 'log-success';
+if (type === 'warn') cssClass = 'log-warn';
+if (type === 'error') cssClass = 'log-error';
+div.className = 'log-row ' + cssClass;
+div.innerHTML = '<span class="mono" style="color:var(--text-dim); shrink-0;">[' + time + ']</span> <span>' + msg + '</span>';
+terminal.prepend(div);
+if (terminal.children.length > 30) {
+terminal.removeChild(terminal.lastChild);
+}
+}
+function clearTerminalLogs() {
+var terminal = document.getElementById('terminalFeed');
+if (terminal) terminal.innerHTML = '<div class="log-row log-info">[LIMPO] Histórico reiniciado.</div>';
+}
+window.addEventListener('load', function() {
+var cfg = NETWORK_CONFIGS[appState.currentNetwork];
+renderRoutesList(cfg.routes, 0);
+recalculateEffectiveCapital();
+updateProfitMetrics();
+updateEngineStatusUI();
+startEngineLoop();
+addTerminalLog('Scanner 8 Moedas Blue-Chip iniciado na rede ' + cfg.name + '.', 'info');
+});
+</script>
 </body>
 </html>
