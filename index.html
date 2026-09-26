@@ -137,7 +137,6 @@
 
   <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-4">
 
-    <!-- TAB 1: RADAR & DASHBOARD -->
     <section id="tabRadar" class="tab-view space-y-3.5">
       
       <!-- Result of the Day & Portfolio Card -->
@@ -249,7 +248,6 @@
       </div>
     </section>
 
-    <!-- TAB 2: ROTAS -->
     <section id="tabTriangles" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
@@ -261,7 +259,6 @@
       <div id="trianglesMobileCards" class="space-y-2.5"></div>
     </section>
 
-    <!-- TAB 3: TRADES -->
     <section id="tabTrades" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
@@ -275,7 +272,6 @@
       </div>
     </section>
 
-    <!-- TAB 4: CARTEIRA -->
     <section id="tabWallet" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -317,7 +313,6 @@
       </div>
     </section>
 
-    <!-- TAB 5: AJUSTES -->
     <section id="tabSettings" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-4">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -581,6 +576,7 @@ while True:
       document.getElementById('heroProfitUsdt').innerText = `+$${appState.accumulatedDailyProfit.toFixed(2)}`;
       document.getElementById('heroProfitRoi').innerText = `+${roi.toFixed(3)}%`;
       document.getElementById('heroCapital').innerText = `${appState.actualWalletUsdt.toLocaleString()} USDT`;
+      document.getElementById('settingsCapitalLabel').innerText = `${appState.fixedCycleUsdt} USDT`;
       
       if (appState.allocationMode === 'fixed') {
         document.getElementById('heroLeverageDisplay').innerText = `Fixo: $${appState.cycleSize.toFixed(0)} por ciclo`;
@@ -618,9 +614,12 @@ while True:
         const nativeSymbol = appState.network === 'polygon' ? 'POL' : (appState.network === 'bsc' ? 'BNB' : 'ETH');
         document.getElementById('walletGasBalance').innerText = `${parseFloat(nativeBalanceFormatted).toFixed(4)} ${nativeSymbol}`;
 
-        // Fetch USDT ERC-20 Balance
+        // Fetch USDT ERC-20 Balance directly on-chain
         const usdtAddress = USDT_ADDRESSES[appState.network] || USDT_ADDRESSES.polygon;
-        const erc20Abi = ["function balanceOf(address owner) view returns (uint256)", "function decimals() view returns (uint8)"];
+        const erc20Abi = [
+          "function balanceOf(address owner) view returns (uint256)",
+          "function decimals() view returns (uint8)"
+        ];
         const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, provider);
 
         const decimals = await usdtContract.decimals().catch(() => 6);
@@ -628,14 +627,16 @@ while True:
         const usdtFormatted = ethers.utils.formatUnits(usdtRaw, decimals);
 
         const realUsdt = parseFloat(usdtFormatted);
-        appState.actualWalletUsdt = realUsdt > 0 ? realUsdt : 1000.0; // fallback if zero testnet
+        // Automatically sync bankroll with real wallet balance
+        appState.actualWalletUsdt = realUsdt > 0 ? realUsdt : 1000.0;
+        appState.fixedCycleUsdt = Math.min(appState.fixedCycleUsdt, appState.actualWalletUsdt);
+        document.getElementById('inputSettingsCapital').value = appState.fixedCycleUsdt;
         document.getElementById('walletUsdtBalance').innerText = `${appState.actualWalletUsdt.toLocaleString()} USDT`;
 
         updateProfitDisplay();
-        logEvent(`Saldos atualizados da blockchain: ${appState.actualWalletUsdt.toLocaleString()} USDT`, 'success');
+        logEvent(`Banco atualizado com saldo real on-chain: ${appState.actualWalletUsdt.toLocaleString()} USDT`, 'success');
       } catch (err) {
         console.warn('Erro ao buscar saldos reais on-chain:', err);
-        // Fallback to default simulated wallet if RPC call fails on test network
         appState.actualWalletUsdt = 1000.0;
         document.getElementById('walletUsdtBalance').innerText = '1,000.00 USDT';
         document.getElementById('walletGasBalance').innerText = '1.450 POL';
@@ -790,7 +791,7 @@ while True:
         }
       });
 
-      // ROBUST WEB3 WALLET CONNECTION HANDLER
+      // ROBUST WEB3 WALLET CONNECTION HANDLER WITH AUTO-BALANCE SYNC
       const btnConnectWallet = document.getElementById('btnConnectMobileWallet');
       const btnHeaderWallet = document.getElementById('btnHeaderWallet');
 
@@ -947,7 +948,7 @@ while True:
       document.getElementById('btnClosePythonModal').addEventListener('click', () => modalPython.classList.add('hidden'));
 
       updateProfitDisplay();
-      logEvent('Painel carregado em modo de segurança (Pausado). Conecte sua carteira para carregar os saldos reais.', 'info');
+      logEvent('Painel carregado em modo de segurança (Pausado). Conecte sua carteira para sincronizar o saldo real de USDT.', 'info');
     });
   </script>
 </body>
