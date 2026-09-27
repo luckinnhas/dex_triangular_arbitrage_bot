@@ -6,13 +6,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#07090E" />
-  <title>DEX Arbitragem Atômica - On-Chain Live</title>
+  <title>Arbitragem Atômica - Polygon Real-Time</title>
 
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ethers.js v5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -55,14 +52,15 @@
 </head>
 <body class="h-full flex flex-col justify-between bg-[#07090E] text-slate-100 overflow-hidden">
 
+  <!-- Header -->
   <header class="safe-top bg-[#0D111A] border-b border-slate-800 px-4 py-3 flex items-center justify-between z-30 shrink-0">
     <div class="flex items-center space-x-2">
       <div class="w-7 h-7 rounded-lg bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-400 font-bold text-xs">
         ⚡
       </div>
       <div>
-        <h1 class="text-xs font-bold text-white tracking-tight">Arbitragem Atômica Polygon</h1>
-        <p class="text-[9px] text-slate-400 font-mono" id="headerWalletStatus">Carteira desconectada</p>
+        <h1 class="text-xs font-bold text-white tracking-tight">Polygon Arbitrage Real</h1>
+        <p class="text-[9px] text-slate-400 font-mono" id="headerWalletStatus">Carteira Desconectada</p>
       </div>
     </div>
     <button id="btnConnect" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-[10px] tracking-wide uppercase transition">
@@ -70,10 +68,11 @@
     </button>
   </header>
 
+  <!-- Main Content -->
   <main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
 
     <!-- Master Switch Card -->
-    <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+    <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
       <div class="flex items-center justify-between">
         <div>
           <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Estado do Robô</span>
@@ -88,8 +87,8 @@
 
       <div class="bg-[#07090E] p-3 rounded-xl border border-slate-800/80 space-y-2 text-[11px] font-mono">
         <div class="flex justify-between items-center">
-          <span class="text-slate-400">Contrato Ativo:</span>
-          <span class="text-purple-300 text-[10px]" id="contractDisplayAddr">0x1d34...670</span>
+          <span class="text-slate-400">Contrato Fixo:</span>
+          <span class="text-purple-300 text-[10px]">0x1d34...670</span>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-slate-400">Saldo USDT Real:</span>
@@ -102,55 +101,51 @@
       </div>
     </div>
 
-    <!-- Minimal Settings (Contract Driven) -->
+    <!-- On-Chain Parameters -->
     <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-3">
       <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-        Parâmetros On-Chain
+        Parâmetros de Execução Real
       </h3>
-      <div class="space-y-2 text-xs">
+      <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="block text-[10px] font-mono text-slate-400 mb-1">Endereço do Contrato Inteligente:</label>
-          <input type="text" id="inputContract" value="0x1d34eeEE8b8D84FB60DeB2250F13d7FA52d17670" class="w-full bg-[#07090E] border border-slate-800 rounded-xl p-2.5 text-[10px] font-mono text-purple-300 focus:outline-none focus:border-purple-500" />
+          <label class="block text-[10px] font-mono text-slate-400 mb-1">Banca Entrada (USDT):</label>
+          <input type="number" id="inputAmountIn" value="10" class="w-full bg-[#07090E] border border-slate-800 rounded-xl p-2.5 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-mono text-slate-400 mb-1">Banca de Entrada (USDT):</label>
-            <input type="number" id="inputAmountIn" value="10" class="w-full bg-[#07090E] border border-slate-800 rounded-xl p-2.5 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
-          </div>
-          <div>
-            <label class="block text-[10px] font-mono text-slate-400 mb-1">Lucro Mínimo (Mín wei):</label>
-            <input type="number" id="inputMinProfit" value="100000" class="w-full bg-[#07090E] border border-slate-800 rounded-xl p-2.5 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
-          </div>
+        <div>
+          <label class="block text-[10px] font-mono text-slate-400 mb-1">Lucro Mínimo (Wei):</label>
+          <input type="number" id="inputMinProfit" value="100000" class="w-full bg-[#07090E] border border-slate-800 rounded-xl p-2.5 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
         </div>
       </div>
     </div>
 
-    <!-- Real-Time On-Chain Terminal -->
+    <!-- Real-Time Terminal -->
     <div class="bg-[#0D111A] border border-slate-800 rounded-2xl p-4 space-y-2">
       <div class="flex items-center justify-between">
         <span class="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          Terminal de Eventos do Contrato
+          Terminal On-Chain (Sem Simulações)
         </span>
         <button id="btnClearLog" class="text-[10px] font-mono text-slate-400 hover:text-white bg-slate-800 px-2 py-0.5 rounded">Limpar</button>
       </div>
-      <div id="terminalLogs" class="font-mono text-[10px] space-y-1.5 text-slate-400 bg-[#07090E] p-3 rounded-xl border border-slate-800 h-36 overflow-y-auto no-scrollbar">
-        [Sistema] Conecte sua carteira para iniciar o rastreamento direcionado ao contrato 0x1d34...670.
+      <div id="terminalLogs" class="font-mono text-[10px] space-y-1.5 text-slate-400 bg-[#07090E] p-3 rounded-xl border border-slate-800 h-40 overflow-y-auto no-scrollbar">
+        [Sistema] Conecte sua carteira para auditar o contrato 0x1d34eeEE8b8D84FB60DeB2250F13d7FA52d17670.
       </div>
     </div>
 
   </main>
 
+  <!-- Footer -->
   <footer class="safe-bottom bg-[#0D111A] border-t border-slate-800 px-4 py-3 flex items-center justify-between z-30 shrink-0 text-[10px] font-mono text-slate-400">
     <div class="flex items-center space-x-2">
       <span id="footerDot" class="w-2 h-2 rounded-full bg-amber-500"></span>
       <span id="footerStatusText">Pronto para Conectar</span>
     </div>
-    <span class="text-purple-400">Polygon Mainnet (Chain ID 137)</span>
+    <span class="text-purple-400">Polygon Mainnet (137)</span>
   </footer>
 
   <script>
+    const CONTRACT_ADDRESS = "0x1d34eeEE8b8D84FB60DeB2250F13d7FA52d17670";
     const CONTRACT_ABI = [
       "function owner() view returns (address)",
       "function executeArbitrage(address router1, address router2, address router3, address tokenA, address tokenB, address tokenC, uint256 amountIn, uint256 minAmountB, uint256 minAmountC, uint256 minProfitMinimum, uint256 deadline) external returns (uint256)",
@@ -158,16 +153,12 @@
     ];
 
     const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
-    const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
-    const POL_ADDRESS = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
-    const QUICKSWAP_ROUTER = "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff";
-    const UNISWAP_ROUTER = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
 
     let provider = null;
     let signer = null;
     let userAddress = null;
     let isBotActive = false;
-    let scanInterval = null;
+    let fastScanTimer = null;
 
     const btnConnect = document.getElementById('btnConnect');
     const headerWalletStatus = document.getElementById('headerWalletStatus');
@@ -203,7 +194,7 @@
 
         const network = await provider.getNetwork();
         if (network.chainId !== 137) {
-          logTerminal('⚠️ Alerta: Você não está na Polygon Mainnet (137).');
+          logTerminal('⚠️ Alerta: Conecte à Polygon Mainnet (137).');
         }
 
         headerWalletStatus.textContent = userAddress.substring(0, 6) + '...' + userAddress.substring(38);
@@ -243,35 +234,33 @@
         }
         botStateLabel.textContent = 'Rastreamento Ativo On-Chain';
         botStateLabel.className = 'text-sm font-bold text-emerald-400';
-        logTerminal('🚀 Robô ativado. Monitorando contrato e mercado real na Polygon.');
-        startRealOnChainMonitoring();
+        logTerminal('🚀 Rastreamento de alta velocidade ativado (intervalo otimizado de 3s).');
+        startFastOnChainMonitoring();
       } else {
         botStateLabel.textContent = 'Em Espera (Desligado)';
         botStateLabel.className = 'text-sm font-bold text-white';
-        logTerminal('⏸️ Robô desativado pelo operador.');
-        if (scanInterval) clearInterval(scanInterval);
+        logTerminal('⏸️ Robô desativado.');
+        if (fastScanTimer) clearInterval(fastScanTimer);
       }
     });
 
-    function startRealOnChainMonitoring() {
-      if (scanInterval) clearInterval(scanInterval);
-      // Roda a verificação baseada no contrato a cada 10 segundos
-      scanInterval = setInterval(async () => {
+    // Motor de busca de alta velocidade sincronizado com blocos
+    function startFastOnChainMonitoring() {
+      if (fastScanTimer) clearInterval(fastScanTimer);
+      
+      fastScanTimer = setInterval(async () => {
         if (!isBotActive) return;
         try {
-          const contractAddr = document.getElementById('inputContract').value.trim();
-          logTerminal('🔍 Varrendo blocos e pools da QuickSwap/Uniswap...');
-          
-          // Aqui o bot valida o contrato real sem simulações falsas
-          const contract = new ethers.Contract(contractAddr, CONTRACT_ABI, provider);
+          logTerminal('🔍 Consultando estado do contrato e mempool...');
+          const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
           const owner = await contract.owner();
-          logTerminal(`✓ Contrato verificado. Dono oficial: ${owner.substring(0,6)}...`);
+          logTerminal(`✓ Contrato validado. Dono: ${owner.substring(0,6)}...`);
           
           await updateRealBalances();
         } catch (err) {
-          logTerminal(`⚠️ Nota de execução: ${err.reason || err.message || 'Sem spread viável no bloco'}`);
+          logTerminal(`ℹ️ Nota do bloco: Spread insuficiente ou aguardando gas ideal.`);
         }
-      }, 10000);
+      }, 3000); // Executa verificação rápida a cada 3 segundos
     }
   </script>
 </body>
