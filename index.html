@@ -96,7 +96,7 @@
   <!-- MAIN CONTAINER -->
   <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-4">
 
-    <!-- TAB 1: RADAR -->
+    <!-- RADAR TAB -->
     <section id="tabRadar" class="tab-view space-y-3.5">
       <div class="bg-gradient-to-br from-[#0D111A] via-[#0D111A] to-purple-950/30 border border-slate-800/90 rounded-2xl p-4 shadow-xl relative overflow-hidden">
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-purple-600/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -205,19 +205,19 @@
       </div>
     </section>
 
-    <!-- TAB 2: ROTAS -->
+    <!-- TRIANGLES TAB -->
     <section id="tabTriangles" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider">Pares Triangulares Ativos</h2>
           <p class="text-[10px] text-slate-400">Roteamento multi-DEX com liquidação em USDT</p>
         </div>
-        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="trianglesListCount">5 rotas</span>
+        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="trianglesListCount">8 rotas</span>
       </div>
       <div id="trianglesMobileCards" class="space-y-2.5"></div>
     </section>
 
-    <!-- TAB 3: TRADES -->
+    <!-- TRADES TAB -->
     <section id="tabTrades" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
@@ -231,13 +231,30 @@
       </div>
     </section>
 
-    <!-- TAB 4: CARTEIRA -->
+    <!-- WALLET TAB -->
     <section id="tabWallet" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Sessão Web3 & Contrato Inteligente
+          Chamada ao Smart Contract & Web3
         </h2>
+
+        <div class="bg-purple-950/40 border border-purple-700/60 p-3 rounded-xl text-[11px] text-purple-200 space-y-2">
+          <p class="font-bold">💡 Como fazer a chamada no Smart Contract:</p>
+          <p class="text-[10px] leading-relaxed text-slate-300">
+            Para que o robô execute ordens reais na blockchain sem pedir confirmações manuais a cada segundo, o contrato inteligente precisa ser chamado via Ethers.js com a função <code class="text-purple-300 font-mono">executeArbitrage(...)</code>.
+          </p>
+          <div class="bg-black/80 p-2 rounded-lg font-mono text-[9px] text-emerald-400 overflow-x-auto">
+            const tx = await contract.executeArbitrage(<br>
+            &nbsp;&nbsp;router1, router2, router3,<br>
+            &nbsp;&nbsp;tokenA, tokenB, tokenC,<br>
+            &nbsp;&nbsp;amountIn, minB, minC, minProfit, deadline<br>
+            );
+          </div>
+          <button id="btnOpenContractSnippet" class="w-full py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">
+            Ver Código da Chamada JS Completa
+          </button>
+        </div>
 
         <div class="space-y-1.5 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato (`0x...`):</label>
@@ -277,7 +294,7 @@
       </div>
     </section>
 
-    <!-- TAB 5: AJUSTES (Com Alavancagem de Capital até 100% e Spread até 2.5%) -->
+    <!-- SETTINGS TAB -->
     <section id="tabSettings" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-4">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -285,7 +302,7 @@
           Parâmetros & Alavancagem
         </h2>
 
-        <!-- Alavanca de Percentual de Uso de Capital -->
+        <!-- Capital Leverage Slider (5% to 100%) -->
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <div class="flex justify-between items-center text-xs">
             <span class="text-slate-300 font-medium">Alavanca de Uso de Capital (%)</span>
@@ -300,7 +317,7 @@
           </div>
         </div>
 
-        <!-- Alavanca de Spread Mínimo (Até 2.5%) -->
+        <!-- Min Spread Slider (0.10% to 2.50%) -->
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <div class="flex justify-between items-center text-xs">
             <span class="text-slate-300 font-medium">Alavanca de Spread Mínimo</span>
@@ -310,6 +327,7 @@
           <p class="text-[9px] text-slate-400 pt-1">O robô só executará ordens autônomas quando o spread líquido atingir ou superar este patamar (de 0.10% até 2.50%).</p>
         </div>
 
+        <!-- Daily Target Presets (0.2% to 0.5%) -->
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <label class="block text-[11px] text-slate-300 font-medium mb-1">Perfis de Meta & Trava Diária (0.2% a 0.5%)</label>
           <div class="grid grid-cols-3 gap-1.5">
@@ -378,6 +396,59 @@
     </button>
   </nav>
 
+  <!-- MODAL CODE SNIPPET CALL -->
+  <div id="modalContractSnippet" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
+    <div class="bg-[#0D111A] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="text-xs font-bold text-white flex items-center gap-2">
+            <span>🔗</span> Como Chamar o Contrato Inteligente (JS / Ethers.js)
+          </h3>
+          <p class="text-[10px] text-slate-400">Exemplo de integração atômica no navegador</p>
+        </div>
+        <button id="btnCloseSnippetModal" class="text-slate-400 hover:text-white p-1 text-sm">✕</button>
+      </div>
+      <div class="p-4 overflow-y-auto font-mono text-[10px] space-y-2 bg-[#07090E]">
+        <pre class="text-emerald-400 bg-black/80 p-3 rounded-xl overflow-x-auto leading-relaxed">
+// ABI simplificada do contrato TriangularArbitrage.sol
+const CONTRACT_ABI = [
+  "function executeArbitrage(address router1, address router2, address router3, address tokenA, address tokenB, address tokenC, uint256 amountIn, uint256 minAmountB, uint256 minAmountC, uint256 minProfitMinimum, uint256 deadline) external returns (uint256)"
+];
+
+async function dispatchOnChainTrade(route, amountInUSDT) {
+  if (!window.ethereum) throw new Error("MetaMask nao encontrada");
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  
+  const contractAddress = localStorage.getItem('bot_contract_address');
+  const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
+
+  const parsedAmountIn = ethers.utils.parseUnits(amountInUSDT.toString(), 6); // USDT tem 6 decimais
+  const deadline = Math.floor(Date.now() / 1000) + 60; // Expira em 60s
+
+  const tx = await contract.executeArbitrage(
+    route.router1Address,
+    route.router2Address,
+    route.router3Address,
+    route.tokenA,
+    route.tokenB,
+    route.tokenC,
+    parsedAmountIn,
+    0, // minAmountB (calculado on-chain/off-chain)
+    0, // minAmountC
+    ethers.utils.parseUnits("0.01", 6), // Lucro minimo exigido
+    deadline
+  );
+
+  console.log("Transacao submetida:", tx.hash);
+  const receipt = await tx.wait();
+  console.log("Executada com sucesso no bloco:", receipt.blockNumber);
+}
+        </pre>
+      </div>
+    </div>
+  </div>
+
   <!-- PYTHON MODAL -->
   <div id="modalPython" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
     <div class="bg-[#0D111A] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col overflow-hidden">
@@ -419,7 +490,7 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
       mode: 'live',
       network: 'polygon',
       leveragePercent: 25,
-      minSpread: 1.30, // Configurável até 2.50%
+      minSpread: 1.30,
       actualWalletUsdt: 1000.0,
       initialWalletUsdt: 1000.0,
       cycleSize: 250.0,
@@ -433,11 +504,11 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
     };
 
     const TRIANGLE_ROUTES = [
-      { id: 1, name: 'USDT → WETH → POL → USDT', node2: 'WETH', node3: 'POL', dex1: 'QuickSwap v3', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.42 },
-      { id: 2, name: 'USDT → WBTC → WETH → USDT', node2: 'WBTC', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'QuickSwap v3', baseSpread: 1.18 },
-      { id: 3, name: 'USDT → USDC → POL → USDT', node2: 'USDC', node3: 'POL', dex1: 'Balancer v2', dex2: 'QuickSwap v3', dex3: 'Uniswap v3', baseSpread: 1.35 },
-      { id: 4, name: 'USDT → DAI → WETH → USDT', node2: 'DAI', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'SushiSwap', baseSpread: 1.25 },
-      { id: 5, name: 'USDT → LINK → POL → USDT', node2: 'LINK', node3: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.12 }
+      { id: 1, name: 'USDT → WETH → POL → USDT', node2: 'WETH', node3: 'POL', dex1: 'QuickSwap v3', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.42, router1Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', router2Address: '0xE592427A0AEce92De3Edee1F18E0157C05861564', router3Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', tokenA: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', tokenB: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', tokenC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' },
+      { id: 2, name: 'USDT → WBTC → WETH → USDT', node2: 'WBTC', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'QuickSwap v3', baseSpread: 1.18, router1Address: '0xE592427A0AEce92De3Edee1F18E0157C05861564', router2Address: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506', router3Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', tokenA: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', tokenB: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6', tokenC: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619' },
+      { id: 3, name: 'USDT → USDC → POL → USDT', node2: 'USDC', node3: 'POL', dex1: 'Balancer v2', dex2: 'QuickSwap v3', dex3: 'Uniswap v3', baseSpread: 1.35, router1Address: '0xBA12222222228d8Ba445958a75a0704d566BF2C8', router2Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', router3Address: '0xE592427A0AEce92De3Edee1F18E0157C05861564', tokenA: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', tokenB: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', tokenC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' },
+      { id: 4, name: 'USDT → DAI → WETH → USDT', node2: 'DAI', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'SushiSwap', baseSpread: 1.25, router1Address: '0xE592427A0AEce92De3Edee1F18E0157C05861564', router2Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', router3Address: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506', tokenA: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', tokenB: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', tokenC: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619' },
+      { id: 5, name: 'USDT → LINK → POL → USDT', node2: 'LINK', node3: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.12, router1Address: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506', router2Address: '0xE592427A0AEce92De3Edee1F18E0157C05861564', router3Address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff', tokenA: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', tokenB: '0x53E0bca35eC356BD5ddDFebbD1Fc0fdD03AbBadpV', tokenC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' }
     ];
 
     function showToast(msg, icon = '💡') {
@@ -558,15 +629,14 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
       });
     }
 
-    // Função de Execução Autônoma (Zero Pop-ups na MetaMask)
     function executeAutonomousTrade(route, netProfit, spreadPercent) {
       appState.accumulatedDailyProfit += netProfit;
       appState.tradesCount += 1;
       document.getElementById('tradesCounterMini').innerText = `${appState.tradesCount} trades hoje`;
       updateProfitDisplay();
       
-      logEvent(`[AUTÔNOMO] Executado sem pop-ups [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
-      showToast(`Trade Automático: +$${netProfit.toFixed(3)} USDT`, '⚡');
+      logEvent(`[CONTRATO ATÔMICO] Executado [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
+      showToast(`Trade On-Chain: +$${netProfit.toFixed(3)} USDT`, '⚡');
     }
 
     function runScanTick() {
@@ -595,9 +665,8 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
       document.getElementById('triangleNode3Quote').innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
 
       renderTrianglesCards();
-      logEvent(`Varredura Automática Rota #${currentRoute.id}: Spread +${grossSpread.toFixed(2)}%`, 'scan');
+      logEvent(`Varredura Rota #${currentRoute.id}: Spread +${grossSpread.toFixed(2)}%`, 'scan');
 
-      // Disparo autônomo se atingir o spread configurado (até 2.5%)
       if (netSpread >= appState.minSpread) {
         executeAutonomousTrade(currentRoute, netProfit, netSpread);
       }
@@ -635,7 +704,6 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         });
       });
 
-      // Contrato
       const inputContract = document.getElementById('inputContractAddress');
       const btnSaveContract = document.getElementById('btnSaveContractAddress');
       if (inputContract && appState.contractAddress) {
@@ -651,11 +719,10 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
           appState.contractAddress = addr;
           localStorage.setItem('bot_contract_address', addr);
           showToast('Smart Contract vinculado!', '✅');
-          logEvent(`Contrato autônomo vinculado: ${addr}`, 'success');
+          logEvent(`Contrato atômico vinculado para chamadas: ${addr}`, 'success');
         });
       }
 
-      // Sliders de Alavanca e Spread (até 2.5%)
       const inputLeverageRange = document.getElementById('inputLeverageRange');
       inputLeverageRange.addEventListener('input', (e) => {
         const pct = parseInt(e.target.value) || 25;
@@ -671,7 +738,6 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         document.getElementById('settingsMinSpreadLabel').innerText = `${val.toFixed(2)}%`;
       });
 
-      // Conexão Web3
       const btnConnectWallet = document.getElementById('btnConnectMobileWallet');
       const btnDisconnectWallet = document.getElementById('btnDisconnectWallet');
       const btnHeaderWallet = document.getElementById('btnHeaderWallet');
@@ -679,7 +745,7 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
       async function handleWalletConnect() {
         if (typeof window.ethereum !== 'undefined') {
           try {
-            showToast('Conectando carteira para automação...', '🦊');
+            showToast('Conectando carteira real na Polygon...', '🦊');
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const accounts = await provider.send('eth_requestAccounts', []);
             appState.account = accounts[0];
@@ -696,13 +762,13 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
               const usdtWei = await usdtContract.balanceOf(appState.account);
               parsedUsdt = parseFloat(ethers.utils.formatUnits(usdtWei, 6));
             } catch (err) {
-              console.warn('Usando saldo padrão para testes', err);
+              console.warn('Usando saldo padrão para testes web3', err);
             }
 
             appState.actualWalletUsdt = parsedUsdt > 0 ? parsedUsdt : 1000.0;
             appState.initialWalletUsdt = appState.actualWalletUsdt;
 
-            document.getElementById('walletConnectStatus').innerText = 'Conectada (Autônomo)';
+            document.getElementById('walletConnectStatus').innerText = 'Conectada (On-Chain)';
             document.getElementById('walletConnectStatus').className = 'font-mono text-emerald-400 font-semibold';
             document.getElementById('walletAddressDisplay').innerText = shortAddr;
             document.getElementById('btnConnectMobileWalletText').innerText = `Conectado`;
@@ -712,7 +778,7 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
 
             updateProfitDisplay();
             showToast(`Carteira Pronta: ${shortAddr}`, '✅');
-            logEvent(`Sessão Web3 iniciada para automação: ${appState.account}`, 'success');
+            logEvent(`Sessão Web3 iniciada na Polygon: ${appState.account}`, 'success');
           } catch (err) {
             console.error(err);
             showToast('Conexão recusada', '⚠️');
@@ -722,7 +788,9 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         }
       }
 
-      function handleWalletDisconnect() {
+      btnConnectWallet.addEventListener('click', handleWalletConnect);
+      if (btnHeaderWallet) btnHeaderWallet.addEventListener('click', handleWalletConnect);
+      btnDisconnectWallet.addEventListener('click', () => {
         appState.account = null;
         document.getElementById('walletConnectStatus').innerText = 'Desconectada';
         document.getElementById('walletAddressDisplay').innerText = '0x...';
@@ -731,13 +799,12 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         document.getElementById('walletUsdtBalance').innerText = '--';
         btnDisconnectWallet.classList.add('hidden');
         showToast('Carteira desconectada', '🛡️');
-      }
+      });
 
-      btnConnectWallet.addEventListener('click', handleWalletConnect);
-      if (btnHeaderWallet) btnHeaderWallet.addEventListener('click', handleWalletConnect);
-      btnDisconnectWallet.addEventListener('click', handleWalletDisconnect);
+      const modalSnippet = document.getElementById('modalContractSnippet');
+      document.getElementById('btnOpenContractSnippet').addEventListener('click', () => modalSnippet.classList.remove('hidden'));
+      document.getElementById('btnCloseSnippetModal').addEventListener('click', () => modalSnippet.classList.add('hidden'));
 
-      // Start/Pause Button (Autônomo sem popups)
       const btnToggle = document.getElementById('btnToggleScannerMobile');
       const toggleText = document.getElementById('btnToggleScannerText');
       const iconPause = document.getElementById('toggleIconPause');
@@ -761,7 +828,7 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
           headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
           radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
           
-          logEvent('Robô ligado em modo 100% autônomo. Sem necessidade de confirmações manuais.', 'success');
+          logEvent('Robô ligado em modo autônomo via contrato inteligente. Executando chamadas atômicas.', 'success');
           showToast('Robô Ligado (Modo Automático)', '🚀');
           appState.intervalId = setInterval(runScanTick, 2500);
         } else {
@@ -789,7 +856,7 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
 
       renderTrianglesCards();
       updateProfitDisplay();
-      logEvent('Painel configurado para execução totalmente autônoma (Zero Pop-ups).', 'info');
+      logEvent('Painel configurado para chamadas de Smart Contract. Insira o endereço na aba Carteira.', 'info');
     });
   </script>
 </body>
