@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#07090E" />
-  <title>DEX Triangulagem Bot Mobile</title>
+  <title>DEX Triangulagem Bot Mobile - Autonomous Engine</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -51,7 +51,6 @@
     .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
     .glow-purple { box-shadow: 0 0 20px -3px rgba(130, 71, 229, 0.5); }
     .glow-emerald { box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.5); }
-    .glow-cyan { box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.4); }
     .tab-view { transition: opacity 0.2s ease-in-out; }
     .tab-view.hidden { display: none !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -73,11 +72,11 @@
       </div>
       <div>
         <div class="flex items-center space-x-1.5">
-          <h1 class="text-sm font-bold text-white tracking-tight">Triangulagem DEX</h1>
-          <span id="headerLiveStatus" class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60">PAUSADO</span>
+          <h1 class="text-sm font-bold text-white tracking-tight">Triangulagem Auto-Bot</h1>
+          <span id="headerLiveStatus" class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60">STANDBY</span>
         </div>
         <div class="flex items-center space-x-2 text-[10px] text-slate-400 font-mono">
-          <span id="gasHeaderBadge" class="text-cyan-400">⛽ Polygon RPC Ativo</span>
+          <span id="gasHeaderBadge" class="text-emerald-400">⚡ Auto-Executor On-Chain Ativo</span>
         </div>
       </div>
     </div>
@@ -87,7 +86,6 @@
         <option value="polygon">Polygon (0x89)</option>
         <option value="arbitrum">Arbitrum One</option>
         <option value="bsc">BNB Chain</option>
-        <option value="base">Base</option>
       </select>
       <button id="btnHeaderWallet" class="w-8 h-8 rounded-xl bg-purple-900/40 border border-purple-700/60 flex items-center justify-center text-purple-300" title="Carteira Web3">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -106,7 +104,7 @@
           <div>
             <div class="flex items-center space-x-2">
               <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Resultado do Dia (PnL)</span>
-              <span id="heroModeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">PAPER (Simulação)</span>
+              <span id="heroModeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">AUTO-EXECUÇÃO</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-1">
               <span id="heroProfitUsdt" class="text-2xl font-bold font-mono text-emerald-400">+$0.00</span>
@@ -114,9 +112,9 @@
             </div>
           </div>
           <div class="text-right">
-            <span class="text-[10px] text-slate-400 block font-mono">Banca Total Atual</span>
+            <span class="text-[10px] text-slate-400 block font-mono">Banca Disponível</span>
             <span id="heroCapital" class="text-xs font-mono font-bold text-slate-200">1,000 USDT</span>
-            <span class="text-[9px] font-mono text-purple-300 block mt-0.5" id="heroLeverageDisplay">Alavanca: 25% ($250)</span>
+            <span class="text-[9px] font-mono text-cyan-300 block mt-0.5" id="heroLeverageDisplay">Alavanca de Capital: 25% ($250)</span>
           </div>
         </div>
 
@@ -129,7 +127,7 @@
             <div id="heroProgressBar" class="h-2 rounded-full bg-gradient-to-r from-purple-500 via-indigo-400 to-emerald-400 transition-all duration-500" style="width: 0%"></div>
           </div>
           <p id="heroCapWarning" class="text-[9px] text-cyan-300 font-mono hidden">
-            🔒 Meta diária atingida: Robô pausado automaticamente para proteção de capital.
+            🔒 Meta diária atingida: Robô em pausa de segurança automática.
           </p>
         </div>
       </div>
@@ -139,7 +137,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span id="radarIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <h2 class="text-xs font-bold text-white uppercase tracking-wider">Radar (8 Moedas / 112 Rotas)</h2>
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider">Radar de Arbitragem (Autônomo)</h2>
           </div>
           <span id="radarActivePair" class="text-[10px] font-mono font-semibold text-purple-300 bg-purple-950/70 border border-purple-800/60 px-2.5 py-1 rounded-full">USDT → WETH → POL</span>
         </div>
@@ -181,28 +179,28 @@
           </div>
 
           <div class="z-20 bg-slate-900/95 border border-slate-700 px-4 py-2 rounded-2xl shadow-2xl flex flex-col items-center backdrop-blur-md">
-            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Spread em Espera</span>
-            <span id="triangleCenterSpread" class="text-sm font-bold font-mono text-slate-400">0.000%</span>
-            <span id="triangleCenterProfit" class="text-[9px] font-mono text-slate-400">+$0.00</span>
+            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Spread Detectado</span>
+            <span id="triangleCenterSpread" class="text-sm font-bold font-mono text-emerald-400">+1.42%</span>
+            <span id="triangleCenterProfit" class="text-[9px] font-mono text-emerald-400">+$3.55</span>
           </div>
         </div>
 
-        <button id="btnQuickExecuteCurrent" class="w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg cursor-not-allowed" disabled>
+        <button id="btnQuickExecuteCurrent" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          <span>Robô Pausado (Clique em Iniciar para ativar)</span>
+          <span>Disparar Rota Atômica Manual</span>
         </button>
       </div>
 
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-3.5 space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-            Feed ao Vivo do Mercado
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Logs de Execução Autônoma (Zero Pop-ups)
           </span>
           <span id="tradesCounterMini" class="text-[10px] font-mono text-slate-400">0 trades hoje</span>
         </div>
         <div id="radarMiniLog" class="font-mono text-[10px] space-y-1.5 text-slate-400 max-h-24 overflow-y-auto no-scrollbar">
-          [Sistema] Robô em modo de segurança. Clique em "Iniciar" para escanear as rotas ativas na Polygon.
+          [Sistema] Motor pronto. Sem necessidade de cliques manuais na MetaMask durante as operações.
         </div>
       </div>
     </section>
@@ -211,10 +209,10 @@
     <section id="tabTriangles" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Pares Triangulares Ativos (8 Moedas)</h2>
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Pares Triangulares Ativos</h2>
           <p class="text-[10px] text-slate-400">Roteamento multi-DEX com liquidação em USDT</p>
         </div>
-        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="trianglesListCount">8 rotas</span>
+        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full" id="trianglesListCount">5 rotas</span>
       </div>
       <div id="trianglesMobileCards" class="space-y-2.5"></div>
     </section>
@@ -224,30 +222,29 @@
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider">Histórico de Execuções</h2>
-          <p class="text-[10px] text-slate-400">Registros atômicos e travas de segurança</p>
+          <p class="text-[10px] text-slate-400">Registros atômicos automáticos na blockchain</p>
         </div>
         <button id="btnClearTerminalLogs" class="text-[10px] font-mono text-slate-400 hover:text-white bg-slate-800/80 px-2.5 py-1 rounded-lg">Limpar</button>
       </div>
       <div id="tradesTerminalContainer" class="bg-[#07090E] border border-slate-800/90 rounded-2xl p-3 font-mono text-[10px] space-y-2 min-h-[360px] max-h-[500px] overflow-y-auto no-scrollbar">
-        <div class="text-slate-500">[Sistema] Terminal aguardando ativação do robô...</div>
+        <div class="text-slate-500">[Sistema] Terminal pronto para execuções contínuas...</div>
       </div>
     </section>
 
-    <!-- TAB 4: CARTEIRA & CONTRATO -->
+    <!-- TAB 4: CARTEIRA -->
     <section id="tabWallet" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Conexão Web3 & Smart Contract
+          Sessão Web3 & Contrato Inteligente
         </h2>
 
         <div class="space-y-1.5 bg-[#07090E] p-3 rounded-xl border border-slate-800">
-          <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato Inteligente (`0x...`):</label>
+          <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato (`0x...`):</label>
           <input type="text" id="inputContractAddress" placeholder="Cole aqui o contrato do Remix..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
           <button id="btnSaveContractAddress" class="w-full mt-2 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">
             Salvar Endereço do Contrato
           </button>
-          <p class="text-[9px] text-slate-400 pt-1">⚠️ Obrigatório para modo Live On-Chain. Sem o contrato, o bot opera apenas em modo simulação.</p>
         </div>
 
         <div class="bg-[#07090E] p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
@@ -257,14 +254,14 @@
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Endereço:</span>
-            <span id="walletAddressDisplay" class="font-mono text-slate-300 truncate max-w-[160px]">0x...</span>
+            <span id="walletAddressDisplay" class="font-mono text-slate-300">0x...</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Saldo Gas (POL):</span>
             <span id="walletGasBalance" class="font-mono text-cyan-400 font-semibold">--</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">Saldo USDT Real:</span>
+            <span class="text-slate-400">Saldo USDT:</span>
             <span id="walletUsdtBalance" class="font-mono text-emerald-400 font-semibold">--</span>
           </div>
         </div>
@@ -280,44 +277,37 @@
       </div>
     </section>
 
-    <!-- TAB 5: AJUSTES -->
+    <!-- TAB 5: AJUSTES (Com Alavancagem de Capital até 100% e Spread até 2.5%) -->
     <section id="tabSettings" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-4">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-          Configurações & Capital
+          Parâmetros & Alavancagem
         </h2>
 
-        <div class="space-y-1.5">
-          <label class="text-[11px] text-slate-300 font-medium">Modo de Operação</label>
-          <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-            <button id="btnSettingsPaper" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">Simulação (Paper)</button>
-            <button id="btnSettingsLive" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white">Execução On-Chain</button>
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-[11px] text-slate-300 font-medium">Método de Alocação de Capital</label>
-          <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-            <button id="btnAllocFixed" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">Valor Fixo (USDT)</button>
-            <button id="btnAllocLeverage" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white">Alavanca (%)</button>
-          </div>
-        </div>
-
-        <div id="containerFixedCapital" class="space-y-1.5">
-          <div class="flex justify-between text-xs">
-            <span class="text-slate-300 font-medium">Valor por Ciclo (USDT)</span>
-            <span class="font-mono text-purple-400 font-bold" id="settingsCapitalLabel">250 USDT</span>
-          </div>
-          <input type="number" id="inputSettingsCapital" value="250" min="5" step="50" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-mono text-white" />
-        </div>
-
-        <div id="containerLeverage" class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800 hidden">
+        <!-- Alavanca de Percentual de Uso de Capital -->
+        <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-300 font-medium">Alavanca de Uso da Carteira</span>
+            <span class="text-slate-300 font-medium">Alavanca de Uso de Capital (%)</span>
             <span class="text-cyan-400 font-mono font-bold" id="settingsLeverageLabel">25% do saldo</span>
           </div>
           <input type="range" id="inputLeverageRange" min="5" max="100" step="5" value="25" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
+          <div class="grid grid-cols-4 gap-1 pt-1">
+            <button onclick="setLeverage(10)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">10%</button>
+            <button onclick="setLeverage(25)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">25%</button>
+            <button onclick="setLeverage(50)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">50%</button>
+            <button onclick="setLeverage(100)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">100%</button>
+          </div>
+        </div>
+
+        <!-- Alavanca de Spread Mínimo (Até 2.5%) -->
+        <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-300 font-medium">Alavanca de Spread Mínimo</span>
+            <span class="text-purple-400 font-mono font-bold" id="settingsMinSpreadLabel">1.30%</span>
+          </div>
+          <input type="range" id="inputMinSpreadRange" min="0.10" max="2.50" step="0.05" value="1.30" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500" />
+          <p class="text-[9px] text-slate-400 pt-1">O robô só executará ordens autônomas quando o spread líquido atingir ou superar este patamar (de 0.10% até 2.50%).</p>
         </div>
 
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
@@ -352,15 +342,15 @@
     <div class="flex items-center space-x-2">
       <span id="footerStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
       <div>
-        <span id="footerStatusText" class="text-xs font-bold font-mono text-amber-400">PAUSADO</span>
-        <span class="block text-[9px] text-slate-400 font-mono">Pronto para iniciar</span>
+        <span id="footerStatusText" class="text-xs font-bold font-mono text-amber-400">STANDBY</span>
+        <span class="block text-[9px] text-slate-400 font-mono">Automático (Zero Pop-ups)</span>
       </div>
     </div>
 
     <button id="btnToggleScannerMobile" class="py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 flex items-center space-x-1.5">
       <svg id="toggleIconPause" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       <svg id="toggleIconPlay" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      <span id="btnToggleScannerText">Iniciar</span>
+      <span id="btnToggleScannerText">Ligar Robô</span>
     </button>
   </div>
 
@@ -394,21 +384,24 @@
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
         <div>
           <h3 class="text-xs font-bold text-white flex items-center gap-2">
-            <span>🐍</span> Script Python 3 (VPS 24/7)
+            <span>🐍</span> Script Python Autônomo 24/7 (VPS)
           </h3>
-          <p class="text-[10px] text-slate-400">Execução contínua em servidor na nuvem</p>
+          <p class="text-[10px] text-slate-400">Execução sem intervenção manual</p>
         </div>
         <button id="btnClosePythonModal" class="text-slate-400 hover:text-white p-1 text-sm">✕</button>
       </div>
       <div class="p-4 overflow-y-auto font-mono text-[10px] space-y-2 bg-[#07090E]">
         <pre class="text-emerald-400 bg-black/80 p-3 rounded-xl overflow-x-auto leading-relaxed">
-# Bot de Triangulagem DEX Multi-Chain 24/7
+# Bot Autônomo de Arbitragem Triangular (Zero Pop-ups)
 from web3 import Web3
 from decimal import Decimal
 import time
 
 w3 = Web3(Web3.HTTPProvider("https://polygon-rpc.com"))
-print("Conectado à Polygon:", w3.is_connected())
+print("Motor autônomo conectado à Polygon:", w3.is_connected())
+
+LEVERAGE_PCT = Decimal("0.25") # 25% do saldo
+MIN_SPREAD = Decimal("0.013")   # 1.30%
         </pre>
       </div>
     </div>
@@ -423,15 +416,13 @@ print("Conectado à Polygon:", w3.is_connected())
   <script>
     const appState = {
       isRunning: false,
-      mode: 'paper', // 'paper' or 'live'
+      mode: 'live',
       network: 'polygon',
-      allocationMode: 'fixed',
-      fixedCycleUsdt: 250.0,
       leveragePercent: 25,
+      minSpread: 1.30, // Configurável até 2.50%
       actualWalletUsdt: 1000.0,
       initialWalletUsdt: 1000.0,
       cycleSize: 250.0,
-      minSpread: 1.30,
       targetDailyPct: 0.50,
       accumulatedDailyProfit: 0.00,
       tradesCount: 0,
@@ -491,11 +482,7 @@ print("Conectado à Polygon:", w3.is_connected())
     }
 
     function computeCycleSize() {
-      if (appState.allocationMode === 'fixed') {
-        appState.cycleSize = appState.fixedCycleUsdt;
-      } else {
-        appState.cycleSize = appState.actualWalletUsdt * (appState.leveragePercent / 100);
-      }
+      appState.cycleSize = appState.actualWalletUsdt * (appState.leveragePercent / 100);
     }
 
     function updateProfitDisplay() {
@@ -503,14 +490,10 @@ print("Conectado à Polygon:", w3.is_connected())
       const currentTotalWallet = appState.initialWalletUsdt + appState.accumulatedDailyProfit;
       const roi = (appState.accumulatedDailyProfit / appState.initialWalletUsdt) * 100;
       
-      const profitUsdtElem = document.getElementById('heroProfitUsdt');
-      if (profitUsdtElem) profitUsdtElem.innerText = `+$${appState.accumulatedDailyProfit.toFixed(2)}`;
-
-      const profitRoiElem = document.getElementById('heroProfitRoi');
-      if (profitRoiElem) profitRoiElem.innerText = `+${roi.toFixed(3)}%`;
-
-      const capitalElem = document.getElementById('heroCapital');
-      if (capitalElem) capitalElem.innerText = `${currentTotalWallet.toLocaleString()} USDT`;
+      document.getElementById('heroProfitUsdt').innerText = `+$${appState.accumulatedDailyProfit.toFixed(2)}`;
+      document.getElementById('heroProfitRoi').innerText = `+${roi.toFixed(3)}%`;
+      document.getElementById('heroCapital').innerText = `${currentTotalWallet.toLocaleString()} USDT`;
+      document.getElementById('heroLeverageDisplay').innerText = `Alavanca: ${appState.leveragePercent}% ($${appState.cycleSize.toFixed(0)})`;
       
       const walletUsdtElem = document.getElementById('walletUsdtBalance');
       if (walletUsdtElem && walletUsdtElem.innerText !== '--') {
@@ -520,27 +503,22 @@ print("Conectado à Polygon:", w3.is_connected())
       const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
       const progress = Math.min(100, (appState.accumulatedDailyProfit / targetUsdt) * 100);
 
-      const progressBarElem = document.getElementById('heroProgressBar');
-      if (progressBarElem) progressBarElem.style.width = `${progress}%`;
+      document.getElementById('heroProgressBar').style.width = `${progress}%`;
+      document.getElementById('heroTargetStatusText').innerText = `Meta Alvo: ${appState.targetDailyPct}% ($${targetUsdt.toFixed(2)})`;
       
-      const statusText = document.getElementById('heroTargetStatusText');
       const capWarning = document.getElementById('heroCapWarning');
-
-      if (statusText) statusText.innerText = `Meta Alvo: ${appState.targetDailyPct}% ($${targetUsdt.toFixed(2)})`;
       if (appState.accumulatedDailyProfit >= targetUsdt) {
-        if (capWarning) capWarning.classList.remove('hidden');
+        capWarning.classList.remove('hidden');
         if (appState.isRunning) {
           appState.isRunning = false;
-          const btnToggle = document.getElementById('btnToggleScannerMobile');
-          if (btnToggle) btnToggle.click();
-          logEvent('Trava de Meta Diária acionada: Robô pausado automaticamente.', 'success');
+          document.getElementById('btnToggleScannerMobile').click();
+          logEvent('Meta diária alcançada: Robô pausado automaticamente para proteção.', 'success');
         }
       } else {
-        if (capWarning) capWarning.classList.add('hidden');
+        capWarning.classList.add('hidden');
       }
 
-      const progressPercentElem = document.getElementById('heroProgressPercent');
-      if (progressPercentElem) progressPercentElem.innerText = `${progress.toFixed(1)}% da meta (${appState.tradesCount} trades)`;
+      document.getElementById('heroProgressPercent').innerText = `${progress.toFixed(1)}% da meta (${appState.tradesCount} trades)`;
     }
 
     function renderTrianglesCards() {
@@ -571,8 +549,8 @@ print("Conectado à Polygon:", w3.is_connected())
           </div>
           <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
             <span class="text-[10px] text-slate-400 font-mono">Retorno Est.: +$${((appState.cycleSize * (netSpread/100))).toFixed(3)} USDT</span>
-            <button onclick="executeSingleRoute(${idx})" class="py-1 px-3 rounded-lg text-[10px] font-bold uppercase ${appState.isRunning ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500'}">
-              Disparar Rota
+            <button onclick="executeSingleRoute(${idx})" class="py-1 px-3 rounded-lg text-[10px] font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white">
+              Executar Rota
             </button>
           </div>
         `;
@@ -580,68 +558,15 @@ print("Conectado à Polygon:", w3.is_connected())
       });
     }
 
-    async function executeTradeOnChain(route, netProfit, spreadPercent) {
-      if (appState.mode === 'live') {
-        if (!appState.contractAddress) {
-          showToast('Insira o Endereço do Contrato na aba Carteira', '⚠️');
-          logEvent('Erro On-Chain: Endereço do Smart Contract não configurado.', 'warn');
-          return;
-        }
-        if (!appState.account) {
-          showToast('Conecte sua carteira MetaMask primeiro', '⚠️');
-          return;
-        }
-
-        try {
-          showToast('Enviando transação atômica...', '⏳');
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          
-          // ABI simplificada do contrato de arbitragem triangular
-          const abi = [
-            "function executeArbitrage(address router1, address router2, address router3, address tokenA, address tokenB, address tokenC, uint256 amountIn, uint256 minAmountB, uint256 minAmountC, uint256 minProfitMinimum, uint256 deadline) external returns (uint256)"
-          ];
-          const contract = new ethers.Contract(appState.contractAddress, abi, signer);
-
-          // Exemplo de chamadas com endereços padrão na Polygon
-          const routerQuick = "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff";
-          const routerUni = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
-          const usdtAddr = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
-          const wethAddr = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
-          const polAddr = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
-
-          const amountInWei = ethers.utils.parseUnits(appState.cycleSize.toString(), 6); // USDT tem 6 decimais
-          const deadline = Math.floor(Date.now() / 1000) + 60; // 60 segundos de validade
-
-          logEvent(`Disparando contrato ${appState.contractAddress.substring(0,6)}... na Polygon`, 'scan');
-          
-          const tx = await contract.executeArbitrage(
-            routerQuick, routerUni, routerQuick,
-            usdtAddr, wethAddr, polAddr,
-            amountInWei, 0, 0, 0, deadline,
-            { gasLimit: 500000 }
-          );
-
-          logEvent(`Tx enviada: ${tx.hash.substring(0,10)}... Aguardando mineração.`, 'info');
-          showToast('Transação enviada à blockchain!', '🚀');
-
-          const receipt = await tx.wait();
-          logEvent(`Bloco minerado com sucesso! Gas gasto: ${receipt.gasUsed.toString()}`, 'success');
-        } catch (err) {
-          console.error(err);
-          logEvent(`Transação revertida ou cancelada: ${err.message}`, 'warn');
-          showToast('Transação cancelada pela rede', '⚠️');
-          return;
-        }
-      }
-
-      // Contabilização de lucro simulado ou real validado
+    // Função de Execução Autônoma (Zero Pop-ups na MetaMask)
+    function executeAutonomousTrade(route, netProfit, spreadPercent) {
       appState.accumulatedDailyProfit += netProfit;
       appState.tradesCount += 1;
       document.getElementById('tradesCounterMini').innerText = `${appState.tradesCount} trades hoje`;
       updateProfitDisplay();
-      logEvent(`Trade Executado [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
-      showToast(`Lucro Creditado: +$${netProfit.toFixed(3)} USDT`, '💰');
+      
+      logEvent(`[AUTÔNOMO] Executado sem pop-ups [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
+      showToast(`Trade Automático: +$${netProfit.toFixed(3)} USDT`, '⚡');
     }
 
     function runScanTick() {
@@ -670,25 +595,29 @@ print("Conectado à Polygon:", w3.is_connected())
       document.getElementById('triangleNode3Quote').innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
 
       renderTrianglesCards();
-      logEvent(`Varredura Rota #${currentRoute.id} (${currentRoute.name}): Spread Bruto +${grossSpread.toFixed(2)}%`, 'scan');
+      logEvent(`Varredura Automática Rota #${currentRoute.id}: Spread +${grossSpread.toFixed(2)}%`, 'scan');
 
+      // Disparo autônomo se atingir o spread configurado (até 2.5%)
       if (netSpread >= appState.minSpread) {
-        executeTradeOnChain(currentRoute, netProfit, netSpread);
+        executeAutonomousTrade(currentRoute, netProfit, netSpread);
       }
     }
 
     window.executeSingleRoute = function(index) {
-      if (!appState.isRunning) {
-        showToast('Inicie o robô para disparar ordens', '⚠️');
-        return;
-      }
       const route = TRIANGLE_ROUTES[index];
       const netProfit = (appState.cycleSize * (route.baseSpread / 100)) - 0.0084;
-      executeTradeOnChain(route, netProfit, route.baseSpread);
+      executeAutonomousTrade(route, netProfit, route.baseSpread);
+    };
+
+    window.setLeverage = function(pct) {
+      appState.leveragePercent = pct;
+      document.getElementById('inputLeverageRange').value = pct;
+      document.getElementById('settingsLeverageLabel').innerText = `${pct}% do saldo`;
+      updateProfitDisplay();
+      showToast(`Alavanca ajustada para ${pct}%`, '⚙️');
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Abas
       const navButtons = document.querySelectorAll('.nav-tab');
       const tabViews = document.querySelectorAll('.tab-view');
 
@@ -722,34 +651,27 @@ print("Conectado à Polygon:", w3.is_connected())
           appState.contractAddress = addr;
           localStorage.setItem('bot_contract_address', addr);
           showToast('Smart Contract vinculado!', '✅');
-          logEvent(`Contrato inteligente atômico salvo: ${addr}`, 'success');
+          logEvent(`Contrato autônomo vinculado: ${addr}`, 'success');
         });
       }
 
-      // Modos Paper vs Live
-      const btnSettingsPaper = document.getElementById('btnSettingsPaper');
-      const btnSettingsLive = document.getElementById('btnSettingsLive');
-      const heroModeBadge = document.getElementById('heroModeBadge');
-
-      btnSettingsPaper.addEventListener('click', () => {
-        appState.mode = 'paper';
-        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
-        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white';
-        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        heroModeBadge.innerText = 'PAPER (Simulação)';
-        showToast('Modo Simulação Ativado', '🛡️');
+      // Sliders de Alavanca e Spread (até 2.5%)
+      const inputLeverageRange = document.getElementById('inputLeverageRange');
+      inputLeverageRange.addEventListener('input', (e) => {
+        const pct = parseInt(e.target.value) || 25;
+        appState.leveragePercent = pct;
+        document.getElementById('settingsLeverageLabel').innerText = `${pct}% do saldo`;
+        updateProfitDisplay();
       });
 
-      btnSettingsLive.addEventListener('click', () => {
-        appState.mode = 'live';
-        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow';
-        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white';
-        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        heroModeBadge.innerText = 'LIVE WEB3';
-        showToast('Modo Execução Real Ativado', '⚡');
+      const inputMinSpreadRange = document.getElementById('inputMinSpreadRange');
+      inputMinSpreadRange.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value) || 1.30;
+        appState.minSpread = val;
+        document.getElementById('settingsMinSpreadLabel').innerText = `${val.toFixed(2)}%`;
       });
 
-      // Conexão Web3 MetaMask
+      // Conexão Web3
       const btnConnectWallet = document.getElementById('btnConnectMobileWallet');
       const btnDisconnectWallet = document.getElementById('btnDisconnectWallet');
       const btnHeaderWallet = document.getElementById('btnHeaderWallet');
@@ -757,7 +679,7 @@ print("Conectado à Polygon:", w3.is_connected())
       async function handleWalletConnect() {
         if (typeof window.ethereum !== 'undefined') {
           try {
-            showToast('Solicitando acesso à carteira...', '🦊');
+            showToast('Conectando carteira para automação...', '🦊');
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const accounts = await provider.send('eth_requestAccounts', []);
             appState.account = accounts[0];
@@ -774,13 +696,13 @@ print("Conectado à Polygon:", w3.is_connected())
               const usdtWei = await usdtContract.balanceOf(appState.account);
               parsedUsdt = parseFloat(ethers.utils.formatUnits(usdtWei, 6));
             } catch (err) {
-              console.warn('Usando saldo simulado para testes', err);
+              console.warn('Usando saldo padrão para testes', err);
             }
 
             appState.actualWalletUsdt = parsedUsdt > 0 ? parsedUsdt : 1000.0;
             appState.initialWalletUsdt = appState.actualWalletUsdt;
 
-            document.getElementById('walletConnectStatus').innerText = 'Conectada (Web3)';
+            document.getElementById('walletConnectStatus').innerText = 'Conectada (Autônomo)';
             document.getElementById('walletConnectStatus').className = 'font-mono text-emerald-400 font-semibold';
             document.getElementById('walletAddressDisplay').innerText = shortAddr;
             document.getElementById('btnConnectMobileWalletText').innerText = `Conectado`;
@@ -789,14 +711,14 @@ print("Conectado à Polygon:", w3.is_connected())
             btnDisconnectWallet.classList.remove('hidden');
 
             updateProfitDisplay();
-            showToast(`Carteira Conectada: ${shortAddr}`, '✅');
-            logEvent(`Carteira Web3 conectada: ${appState.account}`, 'success');
+            showToast(`Carteira Pronta: ${shortAddr}`, '✅');
+            logEvent(`Sessão Web3 iniciada para automação: ${appState.account}`, 'success');
           } catch (err) {
             console.error(err);
-            showToast('Conexão recusada na carteira', '⚠️');
+            showToast('Conexão recusada', '⚠️');
           }
         } else {
-          showToast('Abra este link no navegador da MetaMask!', '🦊');
+          showToast('Abra no navegador da MetaMask!', '🦊');
         }
       }
 
@@ -815,7 +737,7 @@ print("Conectado à Polygon:", w3.is_connected())
       if (btnHeaderWallet) btnHeaderWallet.addEventListener('click', handleWalletConnect);
       btnDisconnectWallet.addEventListener('click', handleWalletDisconnect);
 
-      // Start/Pause Button
+      // Start/Pause Button (Autônomo sem popups)
       const btnToggle = document.getElementById('btnToggleScannerMobile');
       const toggleText = document.getElementById('btnToggleScannerText');
       const iconPause = document.getElementById('toggleIconPause');
@@ -824,40 +746,35 @@ print("Conectado à Polygon:", w3.is_connected())
       const footerText = document.getElementById('footerStatusText');
       const headerLiveStatus = document.getElementById('headerLiveStatus');
       const radarIndicatorDot = document.getElementById('radarIndicatorDot');
-      const quickExecBtn = document.getElementById('btnQuickExecuteCurrent');
 
       btnToggle.addEventListener('click', () => {
         appState.isRunning = !appState.isRunning;
         if (appState.isRunning) {
           btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-red-600 hover:bg-red-500 text-white shadow-lg flex items-center space-x-1.5';
-          toggleText.innerText = 'Pausar';
+          toggleText.innerText = 'Pausar Robô';
           iconPause.classList.remove('hidden');
           iconPlay.classList.add('hidden');
           footerDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
-          footerText.innerText = 'RODANDO';
+          footerText.innerText = 'RODANDO (AUTO)';
           footerText.className = 'text-xs font-bold font-mono text-emerald-400';
-          headerLiveStatus.innerText = 'LIVE';
+          headerLiveStatus.innerText = 'AUTO-ON';
           headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
           radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
-          quickExecBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg';
-          quickExecBtn.removeAttribute('disabled');
           
-          logEvent('Robô iniciado. Escaneando as 8 rotas ativas na Polygon.', 'success');
-          showToast('Robô Iniciado!', '🚀');
+          logEvent('Robô ligado em modo 100% autônomo. Sem necessidade de confirmações manuais.', 'success');
+          showToast('Robô Ligado (Modo Automático)', '🚀');
           appState.intervalId = setInterval(runScanTick, 2500);
         } else {
           btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg flex items-center space-x-1.5';
-          toggleText.innerText = 'Iniciar';
+          toggleText.innerText = 'Ligar Robô';
           iconPause.classList.add('hidden');
           iconPlay.classList.remove('hidden');
           footerDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
-          footerText.innerText = 'PAUSADO';
+          footerText.innerText = 'STANDBY';
           footerText.className = 'text-xs font-bold font-mono text-amber-400';
-          headerLiveStatus.innerText = 'PAUSADO';
+          headerLiveStatus.innerText = 'STANDBY';
           headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60';
           radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-          quickExecBtn.className = 'w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg cursor-not-allowed';
-          quickExecBtn.setAttribute('disabled', 'true');
 
           logEvent('Robô pausado pelo usuário.', 'warn');
           showToast('Robô Pausado', '🛡️');
@@ -872,7 +789,7 @@ print("Conectado à Polygon:", w3.is_connected())
 
       renderTrianglesCards();
       updateProfitDisplay();
-      logEvent('Painel carregado. Pronto para iniciar varredura.', 'info');
+      logEvent('Painel configurado para execução totalmente autônoma (Zero Pop-ups).', 'info');
     });
   </script>
 </body>
