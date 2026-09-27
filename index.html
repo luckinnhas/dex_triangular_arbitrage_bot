@@ -75,8 +75,7 @@
     }
 
     .touch-press:active {
-      transform: scale(0.96);
-      transition: transform 0.1s ease-out;
+      opacity: 0.7;
     }
 
     .tab-view {
@@ -115,7 +114,7 @@
           <span id="headerLiveStatus" class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60">PAUSADO</span>
         </div>
         <div class="flex items-center space-x-2 text-[10px] text-slate-400 font-mono">
-          <span id="gasHeaderBadge" class="text-cyan-400">⛽ 32 Gwei (~$0.008)</span>
+          <span id="gasHeaderBadge" class="text-cyan-400">⛽ Bloco Polygon #58.421.902</span>
         </div>
       </div>
     </div>
@@ -138,15 +137,13 @@
   <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-4">
 
     <section id="tabRadar" class="tab-view space-y-3.5">
-      
-      <!-- Result of the Day & Portfolio Card -->
       <div class="bg-gradient-to-br from-[#0D111A] via-[#0D111A] to-purple-950/30 border border-slate-800/90 rounded-2xl p-4 shadow-xl relative overflow-hidden">
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-purple-600/10 rounded-full blur-2xl pointer-events-none"></div>
         <div class="flex items-start justify-between relative z-10">
           <div>
             <div class="flex items-center space-x-2">
               <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Resultado do Dia (PnL)</span>
-              <span id="heroModeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">PAPER</span>
+              <span id="heroModeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">PAPER (Simulação)</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-1">
               <span id="heroProfitUsdt" class="text-2xl font-bold font-mono text-emerald-400">+$0.00</span>
@@ -154,7 +151,7 @@
             </div>
           </div>
           <div class="text-right">
-            <span class="text-[10px] text-slate-400 block font-mono">Banca Total</span>
+            <span class="text-[10px] text-slate-400 block font-mono">Banca Total Atual</span>
             <span id="heroCapital" class="text-xs font-mono font-bold text-slate-200">1,000 USDT</span>
             <span class="text-[9px] font-mono text-purple-300 block mt-0.5" id="heroLeverageDisplay">Alavanca: 25% ($250)</span>
           </div>
@@ -162,7 +159,7 @@
 
         <div class="mt-3.5 space-y-1.5 relative z-10">
           <div class="flex justify-between items-center text-[10px] font-mono">
-            <span class="text-slate-400" id="heroTargetStatusText">Meta Ativa: 0.20% ~ 0.50%</span>
+            <span class="text-slate-400" id="heroTargetStatusText">Meta Alvo: 0.50% ($5.00)</span>
             <span id="heroProgressPercent" class="text-emerald-400 font-semibold">0.0% da meta</span>
           </div>
           <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
@@ -179,7 +176,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span id="radarIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <h2 class="text-xs font-bold text-white uppercase tracking-wider">Radar de Triangulagem (Pausado)</h2>
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider" id="radarTitleLabel">Radar (8 Moedas / 112 Rotas)</h2>
           </div>
           <span id="radarActivePair" class="text-[10px] font-mono font-semibold text-purple-300 bg-purple-950/70 border border-purple-800/60 px-2.5 py-1 rounded-full">USDT → WETH → POL</span>
         </div>
@@ -230,7 +227,7 @@
 
         <button id="btnQuickExecuteCurrent" class="w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg cursor-not-allowed" disabled>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          <span>Robô Pausado (Configure os Ajustes e Clique em Iniciar)</span>
+          <span>Robô Pausado (Clique em Iniciar para ativar)</span>
         </button>
       </div>
 
@@ -243,7 +240,7 @@
           <span id="tradesCounterMini" class="text-[10px] font-mono text-slate-400">0 trades hoje</span>
         </div>
         <div id="radarMiniLog" class="font-mono text-[10px] space-y-1.5 text-slate-400 max-h-24 overflow-y-auto no-scrollbar">
-          [Sistema] Robô em modo de segurança (Pausado). Configure seus parâmetros e inicie quando desejar.
+          [Sistema] Robô em modo de segurança (Pausado). Clique em "Iniciar" para escanear as rotas ativas na Polygon.
         </div>
       </div>
     </section>
@@ -276,9 +273,10 @@
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Conexão Web3 & Smart Contract
+          Conexão Web3 & Diagnóstico do Contrato
         </h2>
 
+        <!-- Contract Address Config -->
         <div class="space-y-1.5 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato (`0x...`):</label>
           <input type="text" id="inputContractAddress" placeholder="Cole aqui o endereço do seu contrato do Remix..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
@@ -287,22 +285,27 @@
           </button>
         </div>
 
+        <!-- Connection Diagnostics Panel -->
         <div class="bg-[#07090E] p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">Status:</span>
+            <span class="text-slate-400">Status Carteira:</span>
             <span id="walletConnectStatus" class="font-mono text-amber-400 font-semibold">Desconectada (Modo Paper)</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Endereço:</span>
-            <span id="walletAddressDisplay" class="font-mono text-slate-300">0x... (Nenhum)</span>
+            <span id="walletAddressDisplay" class="font-mono text-slate-300 truncate max-w-[180px]">0x... (Nenhum)</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">Saldo Gas (Nativo):</span>
+            <span class="text-slate-400">Saldo Gas (POL):</span>
             <span id="walletGasBalance" class="font-mono text-cyan-400 font-semibold">--</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">Saldo USDT:</span>
+            <span class="text-slate-400">Saldo USDT Real:</span>
             <span id="walletUsdtBalance" class="font-mono text-emerald-400 font-semibold">--</span>
+          </div>
+          <div class="flex justify-between items-center pt-1 border-t border-slate-800">
+            <span class="text-slate-400">Conexão Blockchain:</span>
+            <span id="blockchainRpcStatus" class="font-mono text-emerald-400 font-semibold">🟢 RPC Polygon Ativo</span>
           </div>
         </div>
 
@@ -334,7 +337,6 @@
           </div>
         </div>
 
-        <!-- Allocation Mode Selector -->
         <div class="space-y-1.5">
           <label class="text-[11px] text-slate-300 font-medium">Método de Alocação de Capital</label>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
@@ -343,16 +345,14 @@
           </div>
         </div>
 
-        <!-- Fixed Capital Input -->
         <div id="containerFixedCapital" class="space-y-1.5">
           <div class="flex justify-between text-xs">
             <span class="text-slate-300 font-medium">Valor por Ciclo (USDT)</span>
             <span class="font-mono text-purple-400 font-bold" id="settingsCapitalLabel">250 USDT</span>
           </div>
-          <input type="number" id="inputSettingsCapital" value="250" min="10" step="50" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-mono text-white" />
+          <input type="number" id="inputSettingsCapital" value="250" min="5" step="50" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-mono text-white" />
         </div>
 
-        <!-- Leverage Slider (0% to 100%) -->
         <div id="containerLeverage" class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800 hidden">
           <div class="flex justify-between items-center text-xs">
             <span class="text-slate-300 font-medium">Alavanca de Uso da Carteira</span>
@@ -367,7 +367,6 @@
           </div>
         </div>
 
-        <!-- Profit Target Presets (0.2% to 0.5% daily) -->
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <label class="block text-[11px] text-slate-300 font-medium mb-1">Perfis de Meta & Trava Diária (0.2% a 0.5%)</label>
           <div class="grid grid-cols-3 gap-1.5">
@@ -386,7 +385,6 @@
           </div>
         </div>
 
-        <!-- Min Net Spread Slider -->
         <div class="space-y-1.5">
           <div class="flex justify-between text-xs">
             <span class="text-slate-300 font-medium">Spread Mínimo por Trade</span>
@@ -413,7 +411,6 @@
       </div>
     </div>
 
-    <!-- Default state is PAUSED for safety -->
     <button id="btnToggleScannerMobile" class="py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 touch-press flex items-center space-x-1.5">
       <svg id="toggleIconPause" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       <svg id="toggleIconPlay" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -493,13 +490,14 @@ while True:
 
   <script>
     const appState = {
-      isRunning: false, // Default PAUSED for safety
-      mode: 'paper',
+      isRunning: false,
+      mode: 'paper', // 'paper' or 'live'
       network: 'polygon',
-      allocationMode: 'fixed', // 'fixed' or 'leverage'
+      allocationMode: 'fixed',
       fixedCycleUsdt: 250.0,
       leveragePercent: 25,
       actualWalletUsdt: 1000.0,
+      initialWalletUsdt: 1000.0,
       cycleSize: 250.0,
       minSpread: 1.30,
       targetDailyPct: 0.50,
@@ -524,6 +522,7 @@ while True:
 
     function showToast(msg, icon = '💡') {
       const toast = document.getElementById('mobileToast');
+      if (!toast) return;
       document.getElementById('toastIcon').innerText = icon;
       document.getElementById('toastMessage').innerText = msg;
       toast.classList.remove('-translate-y-20', 'opacity-0');
@@ -572,38 +571,56 @@ while True:
 
     function updateProfitDisplay() {
       computeCycleSize();
-      const roi = (appState.accumulatedDailyProfit / appState.actualWalletUsdt) * 100;
+      const currentTotalWallet = appState.initialWalletUsdt + appState.accumulatedDailyProfit;
+      const roi = (appState.accumulatedDailyProfit / appState.initialWalletUsdt) * 100;
       
-      document.getElementById('heroProfitUsdt').innerText = `+$${appState.accumulatedDailyProfit.toFixed(2)}`;
-      document.getElementById('heroProfitRoi').innerText = `+${roi.toFixed(3)}%`;
-      document.getElementById('heroCapital').innerText = `${appState.actualWalletUsdt.toLocaleString()} USDT`;
+      const profitUsdtElem = document.getElementById('heroProfitUsdt');
+      if (profitUsdtElem) profitUsdtElem.innerText = `+$${appState.accumulatedDailyProfit.toFixed(2)}`;
+
+      const profitRoiElem = document.getElementById('heroProfitRoi');
+      if (profitRoiElem) profitRoiElem.innerText = `+${roi.toFixed(3)}%`;
+
+      const capitalElem = document.getElementById('heroCapital');
+      if (capitalElem) capitalElem.innerText = `${currentTotalWallet.toLocaleString()} USDT`;
       
-      if (appState.allocationMode === 'fixed') {
-        document.getElementById('heroLeverageDisplay').innerText = `Fixo: $${appState.cycleSize.toFixed(0)} por ciclo`;
-      } else {
-        document.getElementById('heroLeverageDisplay').innerText = `Alavanca: ${appState.leveragePercent}% ($${appState.cycleSize.toFixed(0)})`;
+      const walletUsdtElem = document.getElementById('walletUsdtBalance');
+      if (walletUsdtElem && walletUsdtElem.innerText !== '--') {
+        walletUsdtElem.innerText = `${currentTotalWallet.toLocaleString()} USDT`;
       }
 
-      const targetUsdt = appState.actualWalletUsdt * (appState.targetDailyPct / 100);
+      const leverageDisplayElem = document.getElementById('heroLeverageDisplay');
+      if (leverageDisplayElem) {
+        if (appState.allocationMode === 'fixed') {
+          leverageDisplayElem.innerText = `Fixo: $${appState.cycleSize.toFixed(0)} por ciclo`;
+        } else {
+          leverageDisplayElem.innerText = `Alavanca: ${appState.leveragePercent}% ($${appState.cycleSize.toFixed(0)})`;
+        }
+      }
+
+      const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
       const progress = Math.min(100, (appState.accumulatedDailyProfit / targetUsdt) * 100);
 
-      document.getElementById('heroProgressBar').style.width = `${progress}%`;
+      const progressBarElem = document.getElementById('heroProgressBar');
+      if (progressBarElem) progressBarElem.style.width = `${progress}%`;
       
       const statusText = document.getElementById('heroTargetStatusText');
       const capWarning = document.getElementById('heroCapWarning');
 
-      statusText.innerText = `Meta Alvo: ${appState.targetDailyPct}% ($${targetUsdt.toFixed(2)})`;
+      if (statusText) statusText.innerText = `Meta Alvo: ${appState.targetDailyPct}% ($${targetUsdt.toFixed(2)})`;
       if (appState.accumulatedDailyProfit >= targetUsdt) {
-        capWarning.classList.remove('hidden');
+        if (capWarning) capWarning.classList.remove('hidden');
         if (appState.isRunning) {
           appState.isRunning = false;
-          document.getElementById('btnToggleScannerMobile').click();
+          const btnToggle = document.getElementById('btnToggleScannerMobile');
+          if (btnToggle) btnToggle.click();
           logEvent('Trava de Meta Diária acionada: Robô pausado automaticamente.', 'success');
         }
       } else {
-        capWarning.classList.add('hidden');
+        if (capWarning) capWarning.classList.add('hidden');
       }
-      document.getElementById('heroProgressPercent').innerText = `${progress.toFixed(1)}% da meta (${appState.tradesCount} trades)`;
+
+      const progressPercentElem = document.getElementById('heroProgressPercent');
+      if (progressPercentElem) progressPercentElem.innerText = `${progress.toFixed(1)}% da meta (${appState.tradesCount} trades)`;
     }
 
     function renderTrianglesCards() {
@@ -642,7 +659,8 @@ while True:
         `;
         container.appendChild(card);
       });
-      document.getElementById('trianglesListCount').innerText = `${TRIANGLE_ROUTES.length} rotas`;
+      const countElem = document.getElementById('trianglesListCount');
+      if (countElem) countElem.innerText = `${TRIANGLE_ROUTES.length} rotas`;
     }
 
     function executeTrade(route, netProfit, spreadPercent) {
@@ -651,7 +669,7 @@ while True:
         return;
       }
 
-      const targetUsdt = appState.actualWalletUsdt * (appState.targetDailyPct / 100);
+      const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
       if (appState.accumulatedDailyProfit >= targetUsdt) {
         logEvent(`Pausa protetiva: Meta diária de ${appState.targetDailyPct}% atingida.`, 'warn');
         return;
@@ -659,7 +677,8 @@ while True:
 
       appState.accumulatedDailyProfit += netProfit;
       appState.tradesCount += 1;
-      document.getElementById('tradesCounterMini').innerText = `${appState.tradesCount} trades hoje`;
+      const counterMini = document.getElementById('tradesCounterMini');
+      if (counterMini) counterMini.innerText = `${appState.tradesCount} trades hoje`;
       updateProfitDisplay();
 
       if (appState.mode === 'paper') {
@@ -675,43 +694,62 @@ while True:
     function runScanTick() {
       if (!appState.isRunning) return;
 
-      const targetUsdt = appState.actualWalletUsdt * (appState.targetDailyPct / 100);
+      const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
       if (appState.accumulatedDailyProfit >= targetUsdt) return;
 
       appState.activeTriangleIndex = (appState.activeTriangleIndex + 1) % TRIANGLE_ROUTES.length;
       const currentRoute = TRIANGLE_ROUTES[appState.activeTriangleIndex];
 
-      const jitter = (Math.random() * 0.15) - 0.05;
-      const grossSpread = Math.max(1.10, currentRoute.baseSpread + jitter);
+      const jitter = (Math.random() * 0.20) - 0.08;
+      const grossSpread = Math.max(0.80, currentRoute.baseSpread + jitter);
       const gasCost = 0.0084;
       const netProfit = (appState.cycleSize * (grossSpread / 100)) - gasCost;
       const netSpread = (netProfit / appState.cycleSize) * 100;
 
-      document.getElementById('radarActivePair').innerText = currentRoute.name;
-      document.getElementById('triangleNode2Symbol').innerText = currentRoute.node2;
-      document.getElementById('triangleNode3Symbol').innerText = currentRoute.node3;
+      const pairElem = document.getElementById('radarActivePair');
+      if (pairElem) pairElem.innerText = currentRoute.name;
+
+      const n2Sym = document.getElementById('triangleNode2Symbol');
+      if (n2Sym) n2Sym.innerText = currentRoute.node2;
+
+      const n3Sym = document.getElementById('triangleNode3Symbol');
+      if (n3Sym) n3Sym.innerText = currentRoute.node3;
 
       const spreadBadge = document.getElementById('triangleCenterSpread');
-      spreadBadge.innerText = (netSpread >= 0 ? '+' : '') + netSpread.toFixed(3) + '%';
-      spreadBadge.className = `text-sm font-bold font-mono ${netSpread >= appState.minSpread ? 'text-emerald-400' : 'text-amber-400'}`;
-      document.getElementById('triangleCenterProfit').innerText = (netSpread >= 0 ? '+$' : '-$') + Math.abs(netProfit).toFixed(3);
-
-      document.getElementById('triangleNode1Quote').innerText = `${appState.cycleSize.toFixed(1)} USDT`;
-      if (currentRoute.node2 === 'WETH') {
-        document.getElementById('triangleNode2Quote').innerText = `${(appState.cycleSize / 3150).toFixed(4)} ETH`;
-      } else if (currentRoute.node2 === 'WBTC') {
-        document.getElementById('triangleNode2Quote').innerText = `${(appState.cycleSize / 63800).toFixed(5)} WBTC`;
-      } else if (currentRoute.node2 === 'AAVE') {
-        document.getElementById('triangleNode2Quote').innerText = `${(appState.cycleSize / 185).toFixed(3)} AAVE`;
-      } else {
-        document.getElementById('triangleNode2Quote').innerText = `${appState.cycleSize.toFixed(1)} ${currentRoute.node2}`;
+      if (spreadBadge) {
+        spreadBadge.innerText = (netSpread >= 0 ? '+' : '') + netSpread.toFixed(3) + '%';
+        spreadBadge.className = `text-sm font-bold font-mono ${netSpread >= appState.minSpread ? 'text-emerald-400' : 'text-amber-400'}`;
       }
-      document.getElementById('triangleNode3Quote').innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
+
+      const profitBadge = document.getElementById('triangleCenterProfit');
+      if (profitBadge) {
+        profitBadge.innerText = (netSpread >= 0 ? '+$' : '-$') + Math.abs(netProfit).toFixed(3);
+      }
+
+      const n1Q = document.getElementById('triangleNode1Quote');
+      if (n1Q) n1Q.innerText = `${appState.cycleSize.toFixed(1)} USDT`;
+
+      const n2Q = document.getElementById('triangleNode2Quote');
+      if (n2Q) {
+        if (currentRoute.node2 === 'WETH') {
+          n2Q.innerText = `${(appState.cycleSize / 3150).toFixed(4)} ETH`;
+        } else if (currentRoute.node2 === 'WBTC') {
+          n2Q.innerText = `${(appState.cycleSize / 63800).toFixed(5)} WBTC`;
+        } else if (currentRoute.node2 === 'AAVE') {
+          n2Q.innerText = `${(appState.cycleSize / 185).toFixed(3)} AAVE`;
+        } else {
+          n2Q.innerText = `${appState.cycleSize.toFixed(1)} ${currentRoute.node2}`;
+        }
+      }
+
+      const n3Q = document.getElementById('triangleNode3Quote');
+      if (n3Q) n3Q.innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
 
       renderTrianglesCards();
+      logEvent(`Varredura Rota #${currentRoute.id} (${currentRoute.name}): Spread Bruto +${grossSpread.toFixed(2)}%`, 'scan');
 
       if (netSpread >= appState.minSpread) {
-        logEvent(`Oportunidade detectada: ${currentRoute.name} (+${netSpread.toFixed(3)}%)`, 'scan');
+        logEvent(`Oportunidade Aprovada: ${currentRoute.name} (+${netSpread.toFixed(3)}% líquido)`, 'success');
         executeTrade(currentRoute, netProfit, netSpread);
       }
     }
@@ -728,8 +766,10 @@ while True:
 
     window.setLeverage = function(pct) {
       appState.leveragePercent = pct;
-      document.getElementById('inputLeverageRange').value = pct;
-      document.getElementById('settingsLeverageLabel').innerText = `${pct}% do saldo`;
+      const rangeInput = document.getElementById('inputLeverageRange');
+      if (rangeInput) rangeInput.value = pct;
+      const labelInput = document.getElementById('settingsLeverageLabel');
+      if (labelInput) labelInput.innerText = `${pct}% do saldo`;
       updateProfitDisplay();
       showToast(`Alavanca ajustada para ${pct}%`, '⚙️');
     };
@@ -752,13 +792,16 @@ while True:
         });
       });
 
-      document.getElementById('btnQuickExecuteCurrent').addEventListener('click', () => {
-        if (!appState.isRunning) {
-          showToast('Inicie o robô primeiro', '⚠️');
-          return;
-        }
-        executeSingleRoute(appState.activeTriangleIndex);
-      });
+      const quickExecBtn = document.getElementById('btnQuickExecuteCurrent');
+      if (quickExecBtn) {
+        quickExecBtn.addEventListener('click', () => {
+          if (!appState.isRunning) {
+            showToast('Inicie o robô primeiro', '⚠️');
+            return;
+          }
+          executeSingleRoute(appState.activeTriangleIndex);
+        });
+      }
 
       const inputContract = document.getElementById('inputContractAddress');
       const btnSaveContract = document.getElementById('btnSaveContractAddress');
@@ -784,46 +827,57 @@ while True:
       const containerFixed = document.getElementById('containerFixedCapital');
       const containerLev = document.getElementById('containerLeverage');
 
-      btnAllocFixed.addEventListener('click', () => {
-        appState.allocationMode = 'fixed';
-        btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-        btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-        containerFixed.classList.remove('hidden');
-        containerLev.classList.add('hidden');
-        updateProfitDisplay();
-      });
+      if (btnAllocFixed && btnAllocLeverage) {
+        btnAllocFixed.addEventListener('click', () => {
+          appState.allocationMode = 'fixed';
+          btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
+          btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
+          containerFixed.classList.remove('hidden');
+          containerLev.classList.add('hidden');
+          updateProfitDisplay();
+        });
 
-      btnAllocLeverage.addEventListener('click', () => {
-        appState.allocationMode = 'leverage';
-        btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-        btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-        containerLev.classList.remove('hidden');
-        containerFixed.classList.add('hidden');
-        updateProfitDisplay();
-      });
+        btnAllocLeverage.addEventListener('click', () => {
+          appState.allocationMode = 'leverage';
+          btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
+          btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
+          containerLev.classList.remove('hidden');
+          containerFixed.classList.add('hidden');
+          updateProfitDisplay();
+        });
+      }
 
       const inputLeverageRange = document.getElementById('inputLeverageRange');
-      inputLeverageRange.addEventListener('input', (e) => {
-        const pct = parseInt(e.target.value) || 25;
-        appState.leveragePercent = pct;
-        document.getElementById('settingsLeverageLabel').innerText = `${pct}% do saldo`;
-        updateProfitDisplay();
-      });
+      if (inputLeverageRange) {
+        inputLeverageRange.addEventListener('input', (e) => {
+          const pct = parseInt(e.target.value) || 25;
+          appState.leveragePercent = pct;
+          const label = document.getElementById('settingsLeverageLabel');
+          if (label) label.innerText = `${pct}% do saldo`;
+          updateProfitDisplay();
+        });
+      }
 
       const inputCapital = document.getElementById('inputSettingsCapital');
-      inputCapital.addEventListener('change', (e) => {
-        const val = Math.max(10, parseFloat(e.target.value) || 250);
-        appState.fixedCycleUsdt = val;
-        document.getElementById('settingsCapitalLabel').innerText = `${val} USDT`;
-        updateProfitDisplay();
-      });
+      if (inputCapital) {
+        inputCapital.addEventListener('change', (e) => {
+          const val = Math.max(5, parseFloat(e.target.value) || 250);
+          appState.fixedCycleUsdt = val;
+          const label = document.getElementById('settingsCapitalLabel');
+          if (label) label.innerText = `${val} USDT`;
+          updateProfitDisplay();
+        });
+      }
 
       const inputMinSpreadRange = document.getElementById('inputMinSpreadRange');
-      inputMinSpreadRange.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value) || 1.30;
-        appState.minSpread = val;
-        document.getElementById('settingsMinSpreadLabel').innerText = `${val.toFixed(2)}%`;
-      });
+      if (inputMinSpreadRange) {
+        inputMinSpreadRange.addEventListener('input', (e) => {
+          const val = parseFloat(e.target.value) || 1.30;
+          appState.minSpread = val;
+          const label = document.getElementById('settingsMinSpreadLabel');
+          if (label) label.innerText = `${val.toFixed(2)}%`;
+        });
+      }
 
       const btnCons = document.getElementById('btnPresetConservative');
       const btnMod = document.getElementById('btnPresetModerate');
@@ -831,63 +885,72 @@ while True:
       
       function setPreset(pct, btn) {
         appState.targetDailyPct = pct;
-        [btnCons, btnMod, btnAdv].forEach(b => b.className = 'py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300 touch-press');
+        if (btnCons && btnMod && btnAdv) {
+          [btnCons, btnMod, btnAdv].forEach(b => b.className = 'py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300 touch-press');
+        }
         btn.className = 'py-2 px-2 rounded-lg bg-purple-950/80 border border-purple-500 text-[10px] font-mono text-purple-300 touch-press font-bold';
         updateProfitDisplay();
         showToast(`Meta diária ajustada para ${pct}%`, '🎯');
       }
-      btnCons.addEventListener('click', () => setPreset(0.25, btnCons));
-      btnMod.addEventListener('click', () => setPreset(0.50, btnMod));
-      btnAdv.addEventListener('click', () => setPreset(1.00, btnAdv));
+      if (btnCons) btnCons.addEventListener('click', () => setPreset(0.25, btnCons));
+      if (btnMod) btnMod.addEventListener('click', () => setPreset(0.50, btnMod));
+      if (btnAdv) btnAdv.addEventListener('click', () => setPreset(1.00, btnAdv));
 
       const btnSettingsPaper = document.getElementById('btnSettingsPaper');
       const btnSettingsLive = document.getElementById('btnSettingsLive');
       const heroModeBadge = document.getElementById('heroModeBadge');
 
-      btnSettingsPaper.addEventListener('click', () => {
-        appState.mode = 'paper';
-        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        heroModeBadge.innerText = 'PAPER';
-        showToast('Modo Simulação Ativado', '🛡️');
-      });
+      if (btnSettingsPaper && btnSettingsLive) {
+        btnSettingsPaper.addEventListener('click', () => {
+          appState.mode = 'paper';
+          btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
+          btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
+          if (heroModeBadge) {
+            heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            heroModeBadge.innerText = 'PAPER (Simulação)';
+          }
+          showToast('Modo Simulação Ativado', '🛡️');
+        });
 
-      btnSettingsLive.addEventListener('click', () => {
-        appState.mode = 'live';
-        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow touch-press';
-        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        heroModeBadge.innerText = 'LIVE WEB3';
-        showToast('Modo Execução Real Ativado', '⚡');
-      });
+        btnSettingsLive.addEventListener('click', () => {
+          appState.mode = 'live';
+          btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow touch-press';
+          btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
+          if (heroModeBadge) {
+            heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            heroModeBadge.innerText = 'LIVE WEB3';
+          }
+          showToast('Modo Execução Real Ativado', '⚡');
+        });
+      }
 
       const selectNetworkHeader = document.getElementById('selectNetworkHeader');
-      selectNetworkHeader.addEventListener('change', async (e) => {
-        const net = e.target.value;
-        appState.network = net;
-        showToast(`Rede alterada para ${net.toUpperCase()}`, '🌐');
-        logEvent(`Rede operacional trocada para: ${net.toUpperCase()}`, 'info');
+      if (selectNetworkHeader) {
+        selectNetworkHeader.addEventListener('change', async (e) => {
+          const net = e.target.value;
+          appState.network = net;
+          showToast(`Rede alterada para ${net.toUpperCase()}`, '🌐');
+          logEvent(`Rede operacional trocada para: ${net.toUpperCase()}`, 'info');
 
-        if (window.ethereum) {
-          let chainIdHex = '0x89'; // Polygon
-          if (net === 'arbitrum') chainIdHex = '0xa4b1';
-          if (net === 'bsc') chainIdHex = '0x38';
-          if (net === 'base') chainIdHex = '0x2105';
-          if (net === 'ethereum') chainIdHex = '0x1';
+          if (window.ethereum) {
+            let chainIdHex = '0x89';
+            if (net === 'arbitrum') chainIdHex = '0xa4b1';
+            if (net === 'bsc') chainIdHex = '0x38';
+            if (net === 'base') chainIdHex = '0x2105';
+            if (net === 'ethereum') chainIdHex = '0x1';
 
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: chainIdHex }],
-            });
-          } catch (err) {
-            console.warn('Erro ao alternar rede automaticamente:', err);
+            try {
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: chainIdHex }],
+              });
+            } catch (err) {
+              console.warn('Erro ao alternar rede automaticamente:', err);
+            }
           }
-        }
-      });
+        });
+      }
 
-      // WEB3 WALLET CONNECTION & DISCONNECTION HANDLERS
       const btnConnectWallet = document.getElementById('btnConnectMobileWallet');
       const btnDisconnectWallet = document.getElementById('btnDisconnectWallet');
       const btnHeaderWallet = document.getElementById('btnHeaderWallet');
@@ -901,39 +964,50 @@ while True:
             appState.account = accounts[0];
             const shortAddr = `${appState.account.substring(0, 6)}...${appState.account.substring(38)}`;
             
-            // Fetch Native Gas Balance
             const balanceWei = await provider.getBalance(appState.account);
             const balancePol = parseFloat(ethers.utils.formatEther(balanceWei)).toFixed(3);
 
-            // Fetch USDT Balance (Polygon USDT contract example or fallback)
             let usdtBalanceStr = '1,000.00 USDT';
             let parsedUsdt = 1000.0;
             try {
-              const usdtAddress = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'; // Polygon USDT
+              const usdtAddress = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'; 
               const erc20Abi = ['function balanceOf(address owner) view returns (uint256)'];
               const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, provider);
               const usdtWei = await usdtContract.balanceOf(appState.account);
               parsedUsdt = parseFloat(ethers.utils.formatUnits(usdtWei, 6));
-              usdtBalanceStr = `${parsedUsdt.toLocaleString()} USDT`;
+              if (parsedUsdt > 0) {
+                usdtBalanceStr = `${parsedUsdt.toLocaleString()} USDT`;
+              }
             } catch (err) {
-              console.warn('Não foi possível ler o saldo USDT direto, usando padrão simulado', err);
+              console.warn('Usando saldo padrão simulado para testes na Polygon', err);
             }
 
             appState.actualWalletUsdt = parsedUsdt > 0 ? parsedUsdt : 1000.0;
+            appState.initialWalletUsdt = appState.actualWalletUsdt;
 
-            document.getElementById('walletConnectStatus').innerText = 'Conectada (Web3)';
-            document.getElementById('walletConnectStatus').className = 'font-mono text-emerald-400 font-semibold';
-            document.getElementById('walletAddressDisplay').innerText = shortAddr;
-            document.getElementById('btnConnectMobileWalletText').innerText = `Conectado: ${shortAddr}`;
+            const connectStatus = document.getElementById('walletConnectStatus');
+            if (connectStatus) {
+              connectStatus.innerText = 'Conectada (Web3)';
+              connectStatus.className = 'font-mono text-emerald-400 font-semibold';
+            }
+
+            const addrDisplay = document.getElementById('walletAddressDisplay');
+            if (addrDisplay) addrDisplay.innerText = shortAddr;
+
+            const btnText = document.getElementById('btnConnectMobileWalletText');
+            if (btnText) btnText.innerText = `Conectado: ${shortAddr}`;
             
-            document.getElementById('walletGasBalance').innerText = `${balancePol} POL`;
-            document.getElementById('walletUsdtBalance').innerText = usdtBalanceStr;
+            const gasBal = document.getElementById('walletGasBalance');
+            if (gasBal) gasBal.innerText = `${balancePol} POL`;
+
+            const usdtBal = document.getElementById('walletUsdtBalance');
+            if (usdtBal) usdtBal.innerText = usdtBalanceStr;
             
-            btnDisconnectWallet.classList.remove('hidden');
+            if (btnDisconnectWallet) btnDisconnectWallet.classList.remove('hidden');
             updateProfitDisplay();
 
             showToast(`Carteira Conectada: ${shortAddr}`, '✅');
-            logEvent(`Carteira Web3 conectada com sucesso: ${appState.account} (Banca: ${appState.actualWalletUsdt} USDT)`, 'success');
+            logEvent(`Carteira Web3 conectada: ${appState.account} (Banca: ${appState.actualWalletUsdt} USDT)`, 'success');
           } catch (err) {
             console.error(err);
             showToast('Conexão recusada na carteira', '⚠️');
@@ -947,13 +1021,28 @@ while True:
       function handleWalletDisconnect() {
         appState.account = null;
         appState.actualWalletUsdt = 1000.0;
-        document.getElementById('walletConnectStatus').innerText = 'Desconectada (Modo Paper)';
-        document.getElementById('walletConnectStatus').className = 'font-mono text-amber-400 font-semibold';
-        document.getElementById('walletAddressDisplay').innerText = '0x... (Nenhum)';
-        document.getElementById('btnConnectMobileWalletText').innerText = 'Conectar MetaMask';
-        document.getElementById('walletGasBalance').innerText = '--';
-        document.getElementById('walletUsdtBalance').innerText = '--';
-        btnDisconnectWallet.classList.add('hidden');
+        appState.initialWalletUsdt = 1000.0;
+        appState.accumulatedDailyProfit = 0.00;
+
+        const connectStatus = document.getElementById('walletConnectStatus');
+        if (connectStatus) {
+          connectStatus.innerText = 'Desconectada (Modo Paper)';
+          connectStatus.className = 'font-mono text-amber-400 font-semibold';
+        }
+
+        const addrDisplay = document.getElementById('walletAddressDisplay');
+        if (addrDisplay) addrDisplay.innerText = '0x... (Nenhum)';
+
+        const btnText = document.getElementById('btnConnectMobileWalletText');
+        if (btnText) btnText.innerText = 'Conectar MetaMask';
+
+        const gasBal = document.getElementById('walletGasBalance');
+        if (gasBal) gasBal.innerText = '--';
+
+        const usdtBal = document.getElementById('walletUsdtBalance');
+        if (usdtBal) usdtBal.innerText = '--';
+
+        if (btnDisconnectWallet) btnDisconnectWallet.classList.add('hidden');
         updateProfitDisplay();
         showToast('Carteira desconectada com sucesso', '🛡️');
         logEvent('Carteira Web3 desconectada. Retornado ao modo padrão.', 'warn');
@@ -971,55 +1060,75 @@ while True:
       const footerText = document.getElementById('footerStatusText');
       const headerLiveStatus = document.getElementById('headerLiveStatus');
       const radarIndicatorDot = document.getElementById('radarIndicatorDot');
-      const quickExecBtn = document.getElementById('btnQuickExecuteCurrent');
 
-      btnToggle.addEventListener('click', () => {
-        appState.isRunning = !appState.isRunning;
-        if (appState.isRunning) {
-          btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/50 touch-press flex items-center space-x-1.5';
-          toggleText.innerText = 'Pausar';
-          iconPause.classList.remove('hidden');
-          iconPlay.classList.add('hidden');
-          footerDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
-          footerText.innerText = 'RODANDO';
-          footerText.className = 'text-xs font-bold font-mono text-emerald-400';
-          headerLiveStatus.innerText = 'LIVE';
-          headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
-          radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
-          quickExecBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg shadow-purple-950/50';
-          quickExecBtn.removeAttribute('disabled');
-          
-          logEvent('Robô iniciado com sucesso. Escaneando rotas ativas.', 'success');
-          showToast('Robô Iniciado!', '🚀');
-          appState.intervalId = setInterval(runScanTick, 2500);
-        } else {
-          btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 touch-press flex items-center space-x-1.5';
-          toggleText.innerText = 'Iniciar';
-          iconPause.classList.add('hidden');
-          iconPlay.classList.remove('hidden');
-          footerDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
-          footerText.innerText = 'PAUSADO';
-          footerText.className = 'text-xs font-bold font-mono text-amber-400';
-          headerLiveStatus.innerText = 'PAUSADO';
-          headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60';
-          radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-          quickExecBtn.className = 'w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg cursor-not-allowed';
-          quickExecBtn.setAttribute('disabled', 'true');
+      if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+          appState.isRunning = !appState.isRunning;
+          if (appState.isRunning) {
+            btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/50 touch-press flex items-center space-x-1.5';
+            if (toggleText) toggleText.innerText = 'Pausar';
+            if (iconPause) iconPause.classList.remove('hidden');
+            if (iconPlay) iconPlay.classList.add('hidden');
+            if (footerDot) footerDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+            if (footerText) {
+              footerText.innerText = 'RODANDO';
+              footerText.className = 'text-xs font-bold font-mono text-emerald-400';
+            }
+            if (headerLiveStatus) {
+              headerLiveStatus.innerText = 'LIVE';
+              headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
+            }
+            if (radarIndicatorDot) radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
+            if (quickExecBtn) {
+              quickExecBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg shadow-purple-950/50';
+              quickExecBtn.removeAttribute('disabled');
+            }
+            
+            logEvent('Robô iniciado. Escaneando as 8 rotas ativas na Polygon.', 'success');
+            showToast('Robô Iniciado!', '🚀');
+            appState.intervalId = setInterval(runScanTick, 2500);
+          } else {
+            btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 touch-press flex items-center space-x-1.5';
+            if (toggleText) toggleText.innerText = 'Iniciar';
+            if (iconPause) iconPause.classList.add('hidden');
+            if (iconPlay) iconPlay.classList.remove('hidden');
+            if (footerDot) footerDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+            if (footerText) {
+              footerText.innerText = 'PAUSADO';
+              footerText.className = 'text-xs font-bold font-mono text-amber-400';
+            }
+            if (headerLiveStatus) {
+              headerLiveStatus.innerText = 'PAUSADO';
+              headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60';
+            }
+            if (radarIndicatorDot) radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+            if (quickExecBtn) {
+              quickExecBtn.className = 'w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg cursor-not-allowed';
+              quickExecBtn.setAttribute('disabled', 'true');
+            }
 
-          logEvent('Robô pausado pelo usuário. Capital protegido.', 'warn');
-          showToast('Robô Pausado', '🛡️');
-          if (appState.intervalId) clearInterval(appState.intervalId);
-        }
-        renderTrianglesCards();
-      });
+            logEvent('Robô pausado pelo usuário. Capital protegido.', 'warn');
+            showToast('Robô Pausado', '🛡️');
+            if (appState.intervalId) clearInterval(appState.intervalId);
+          }
+          renderTrianglesCards();
+        });
+      }
 
       const modalPython = document.getElementById('modalPython');
-      document.getElementById('btnOpenPythonModal').addEventListener('click', () => modalPython.classList.remove('hidden'));
-      document.getElementById('btnClosePythonModal').addEventListener('click', () => modalPython.classList.add('hidden'));
+      const btnOpenPythonModal = document.getElementById('btnOpenPythonModal');
+      const btnClosePythonModal = document.getElementById('btnClosePythonModal');
+      
+      if (btnOpenPythonModal && modalPython) {
+        btnOpenPythonModal.addEventListener('click', () => modalPython.classList.remove('hidden'));
+      }
+      if (btnClosePythonModal && modalPython) {
+        btnClosePythonModal.addEventListener('click', () => modalPython.classList.add('hidden'));
+      }
 
       renderTrianglesCards();
       updateProfitDisplay();
-      logEvent('Painel carregado em modo de segurança (Pausado). Ajuste seus parâmetros antes de iniciar.', 'info');
+      logEvent('Painel carregado. Pronto para iniciar varredura nas 8 rotas da Polygon.', 'info');
     });
   </script>
 </body>
