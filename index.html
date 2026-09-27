@@ -236,23 +236,16 @@
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Chamada ao Smart Contract & Web3
+          Conexão com o Smart Contract & USDT Real
         </h2>
 
-        <div class="bg-purple-950/40 border border-purple-700/60 p-3 rounded-xl text-[11px] text-purple-200 space-y-2">
-          <p class="font-bold">💡 Como fazer a chamada no Smart Contract:</p>
+        <div class="bg-emerald-950/40 border border-emerald-700/60 p-3 rounded-xl text-[11px] text-emerald-200 space-y-2">
+          <p class="font-bold">💡 Como usar seu USDT real no Contrato:</p>
           <p class="text-[10px] leading-relaxed text-slate-300">
-            Para que o robô execute ordens reais na blockchain sem pedir confirmações manuais a cada segundo, o contrato inteligente precisa ser chamado via Ethers.js com a função <code class="text-purple-300 font-mono">executeArbitrage(...)</code>.
+            Para que o robô utilize o seu saldo real de USDT da carteira, o seu Smart Contract precisa ter permissão (<code class="text-emerald-300 font-mono">approve</code>) para puxar o capital para dentro do circuito atômico. Sem essa aprovação, o robô operará apenas no modo visual.
           </p>
-          <div class="bg-black/80 p-2 rounded-lg font-mono text-[9px] text-emerald-400 overflow-x-auto">
-            const tx = await contract.executeArbitrage(<br>
-            &nbsp;&nbsp;router1, router2, router3,<br>
-            &nbsp;&nbsp;tokenA, tokenB, tokenC,<br>
-            &nbsp;&nbsp;amountIn, minB, minC, minProfit, deadline<br>
-            );
-          </div>
-          <button id="btnOpenContractSnippet" class="w-full py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">
-            Ver Código da Chamada JS Completa
+          <button id="btnApproveUsdt" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">
+            Aprovar USDT no Contrato (Approve)
           </button>
         </div>
 
@@ -278,7 +271,7 @@
             <span id="walletGasBalance" class="font-mono text-cyan-400 font-semibold">--</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">Saldo USDT:</span>
+            <span class="text-slate-400">Saldo USDT Real:</span>
             <span id="walletUsdtBalance" class="font-mono text-emerald-400 font-semibold">--</span>
           </div>
         </div>
@@ -395,59 +388,6 @@
       <span class="text-[9px] font-medium mt-1">Ajustes</span>
     </button>
   </nav>
-
-  <!-- MODAL CODE SNIPPET CALL -->
-  <div id="modalContractSnippet" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
-    <div class="bg-[#0D111A] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col overflow-hidden">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
-        <div>
-          <h3 class="text-xs font-bold text-white flex items-center gap-2">
-            <span>🔗</span> Como Chamar o Contrato Inteligente (JS / Ethers.js)
-          </h3>
-          <p class="text-[10px] text-slate-400">Exemplo de integração atômica no navegador</p>
-        </div>
-        <button id="btnCloseSnippetModal" class="text-slate-400 hover:text-white p-1 text-sm">✕</button>
-      </div>
-      <div class="p-4 overflow-y-auto font-mono text-[10px] space-y-2 bg-[#07090E]">
-        <pre class="text-emerald-400 bg-black/80 p-3 rounded-xl overflow-x-auto leading-relaxed">
-// ABI simplificada do contrato TriangularArbitrage.sol
-const CONTRACT_ABI = [
-  "function executeArbitrage(address router1, address router2, address router3, address tokenA, address tokenB, address tokenC, uint256 amountIn, uint256 minAmountB, uint256 minAmountC, uint256 minProfitMinimum, uint256 deadline) external returns (uint256)"
-];
-
-async function dispatchOnChainTrade(route, amountInUSDT) {
-  if (!window.ethereum) throw new Error("MetaMask nao encontrada");
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  
-  const contractAddress = localStorage.getItem('bot_contract_address');
-  const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
-
-  const parsedAmountIn = ethers.utils.parseUnits(amountInUSDT.toString(), 6); // USDT tem 6 decimais
-  const deadline = Math.floor(Date.now() / 1000) + 60; // Expira em 60s
-
-  const tx = await contract.executeArbitrage(
-    route.router1Address,
-    route.router2Address,
-    route.router3Address,
-    route.tokenA,
-    route.tokenB,
-    route.tokenC,
-    parsedAmountIn,
-    0, // minAmountB (calculado on-chain/off-chain)
-    0, // minAmountC
-    ethers.utils.parseUnits("0.01", 6), // Lucro minimo exigido
-    deadline
-  );
-
-  console.log("Transacao submetida:", tx.hash);
-  const receipt = await tx.wait();
-  console.log("Executada com sucesso no bloco:", receipt.blockNumber);
-}
-        </pre>
-      </div>
-    </div>
-  </div>
 
   <!-- PYTHON MODAL -->
   <div id="modalPython" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
@@ -723,6 +663,39 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         });
       }
 
+      // USDT Approve handler for real contracts
+      const btnApproveUsdt = document.getElementById('btnApproveUsdt');
+      if (btnApproveUsdt) {
+        btnApproveUsdt.addEventListener('click', async () => {
+          if (!appState.account) {
+            showToast('Conecte a carteira primeiro', '⚠️');
+            return;
+          }
+          if (!appState.contractAddress) {
+            showToast('Cole o endereço do Smart Contract primeiro', '⚠️');
+            return;
+          }
+          try {
+            showToast('Solicitando permissão de USDT...', '🪙');
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const usdtAddress = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'; // USDT Polygon
+            const erc20Abi = ['function approve(address spender, uint256 amount) public returns (bool)'];
+            const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+            
+            const maxApproval = ethers.constants.MaxUint256;
+            const tx = await usdtContract.approve(appState.contractAddress, maxApproval);
+            showToast('Transação de Approve enviada...', '⚡');
+            await tx.wait();
+            showToast('USDT Aprovado com Sucesso para o Contrato!', '✅');
+            logEvent(`Contrato ${appState.contractAddress} autorizado a operar USDT real.`, 'success');
+          } catch (err) {
+            console.error(err);
+            showToast('Erro ao aprovar USDT (Verifique o saldo de POL para Gas)', '❌');
+          }
+        });
+      }
+
       const inputLeverageRange = document.getElementById('inputLeverageRange');
       inputLeverageRange.addEventListener('input', (e) => {
         const pct = parseInt(e.target.value) || 25;
@@ -800,10 +773,6 @@ MIN_SPREAD = Decimal("0.013")   # 1.30%
         btnDisconnectWallet.classList.add('hidden');
         showToast('Carteira desconectada', '🛡️');
       });
-
-      const modalSnippet = document.getElementById('modalContractSnippet');
-      document.getElementById('btnOpenContractSnippet').addEventListener('click', () => modalSnippet.classList.remove('hidden'));
-      document.getElementById('btnCloseSnippetModal').addEventListener('click', () => modalSnippet.classList.add('hidden'));
 
       const btnToggle = document.getElementById('btnToggleScannerMobile');
       const toggleText = document.getElementById('btnToggleScannerText');
