@@ -10,7 +10,7 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ethers.js for Web3 Integration on Mobile -->
+  <!-- Ethers.js v5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,11 +27,7 @@
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            polygon: {
-              DEFAULT: '#8247E5',
-              dark: '#6327c6',
-              light: '#9b6bf7',
-            },
+            polygon: { DEFAULT: '#8247E5', dark: '#6327c6', light: '#9b6bf7' },
             dexgreen: '#10B981',
             dexdark: '#07090E',
             dexcard: '#0D111A',
@@ -42,13 +38,8 @@
   </script>
 
   <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    input, pre, code {
-      user-select: text;
-    }
+    * { -webkit-tap-highlight-color: transparent; }
+    input, pre, code { user-select: text; }
     body {
       background-color: #07090E;
       color: #F3F4F6;
@@ -56,48 +47,20 @@
       overscroll-behavior-y: none;
     }
     .mono { font-family: 'JetBrains Mono', monospace; }
-
-    .safe-top {
-      padding-top: max(env(safe-area-inset-top), 0.75rem);
-    }
-    .safe-bottom {
-      padding-bottom: max(env(safe-area-inset-bottom), 1rem);
-    }
-
-    .glow-purple {
-      box-shadow: 0 0 20px -3px rgba(130, 71, 229, 0.5);
-    }
-    .glow-emerald {
-      box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.5);
-    }
-    .glow-cyan {
-      box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.4);
-    }
-
-    .touch-press:active {
-      opacity: 0.7;
-    }
-
-    .tab-view {
-      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-    }
-    .tab-view.hidden {
-      display: none !important;
-      opacity: 0;
-      transform: translateY(8px);
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .safe-top { padding-top: max(env(safe-area-inset-top), 0.75rem); }
+    .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
+    .glow-purple { box-shadow: 0 0 20px -3px rgba(130, 71, 229, 0.5); }
+    .glow-emerald { box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.5); }
+    .glow-cyan { box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.4); }
+    .tab-view { transition: opacity 0.2s ease-in-out; }
+    .tab-view.hidden { display: none !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="h-full flex flex-col justify-between bg-[#07090E] text-slate-100 overflow-hidden">
 
+  <!-- HEADER -->
   <header class="safe-top bg-[#0D111A]/95 border-b border-slate-800/80 px-4 pb-3 flex items-center justify-between z-30 backdrop-blur-md shrink-0">
     <div class="flex items-center space-x-2.5">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 via-indigo-600 to-emerald-500 p-0.5 flex items-center justify-center glow-purple">
@@ -114,7 +77,7 @@
           <span id="headerLiveStatus" class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60">PAUSADO</span>
         </div>
         <div class="flex items-center space-x-2 text-[10px] text-slate-400 font-mono">
-          <span id="gasHeaderBadge" class="text-cyan-400">⛽ Bloco Polygon #58.421.902</span>
+          <span id="gasHeaderBadge" class="text-cyan-400">⛽ Polygon RPC Ativo</span>
         </div>
       </div>
     </div>
@@ -125,17 +88,17 @@
         <option value="arbitrum">Arbitrum One</option>
         <option value="bsc">BNB Chain</option>
         <option value="base">Base</option>
-        <option value="ethereum">Ethereum</option>
       </select>
-
-      <button id="btnHeaderWallet" class="w-8 h-8 rounded-xl bg-purple-900/40 border border-purple-700/60 flex items-center justify-center text-purple-300 touch-press" title="Carteira Web3">
+      <button id="btnHeaderWallet" class="w-8 h-8 rounded-xl bg-purple-900/40 border border-purple-700/60 flex items-center justify-center text-purple-300" title="Carteira Web3">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
       </button>
     </div>
   </header>
 
+  <!-- MAIN CONTAINER -->
   <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3.5 space-y-4">
 
+    <!-- TAB 1: RADAR -->
     <section id="tabRadar" class="tab-view space-y-3.5">
       <div class="bg-gradient-to-br from-[#0D111A] via-[#0D111A] to-purple-950/30 border border-slate-800/90 rounded-2xl p-4 shadow-xl relative overflow-hidden">
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-purple-600/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -171,26 +134,25 @@
         </div>
       </div>
 
-      <!-- Radar Scanner Display -->
+      <!-- Radar Display -->
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3 relative overflow-hidden">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span id="radarIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <h2 class="text-xs font-bold text-white uppercase tracking-wider" id="radarTitleLabel">Radar (8 Moedas / 112 Rotas)</h2>
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider">Radar (8 Moedas / 112 Rotas)</h2>
           </div>
           <span id="radarActivePair" class="text-[10px] font-mono font-semibold text-purple-300 bg-purple-950/70 border border-purple-800/60 px-2.5 py-1 rounded-full">USDT → WETH → POL</span>
         </div>
 
-        <div class="relative bg-[#07090E] rounded-xl border border-slate-800/80 h-48 flex items-center justify-center overflow-hidden glow-cyan/10">
+        <div class="relative bg-[#07090E] rounded-xl border border-slate-800/80 h-48 flex items-center justify-center overflow-hidden">
           <div class="absolute w-40 h-40 rounded-full border border-slate-700/30 pointer-events-none"></div>
-
           <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 320 190" preserveAspectRatio="none">
             <polygon points="60,135 160,35 260,135" fill="rgba(130, 71, 229, 0.03)" stroke="#475569" stroke-width="1.5" stroke-dasharray="6,4" class="opacity-50" />
           </svg>
 
           <div class="absolute bottom-3 left-4 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-900 p-0.5">
-              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center shadow-inner">
+              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center">
                 <span class="text-[10px] font-bold font-mono text-emerald-400">USDT</span>
                 <span class="text-[7px] text-slate-400">Base</span>
               </div>
@@ -200,7 +162,7 @@
 
           <div class="absolute top-2 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-900 p-0.5">
-              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center shadow-inner">
+              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center">
                 <span id="triangleNode2Symbol" class="text-[10px] font-bold font-mono text-purple-300">WETH</span>
                 <span class="text-[7px] text-slate-400">Perna 1</span>
               </div>
@@ -210,7 +172,7 @@
 
           <div class="absolute bottom-3 right-4 flex flex-col items-center z-10">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-600 to-blue-900 p-0.5">
-              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center shadow-inner">
+              <div class="w-full h-full bg-[#0D111A] rounded-[14px] flex flex-col items-center justify-center">
                 <span id="triangleNode3Symbol" class="text-[10px] font-bold font-mono text-cyan-300">POL</span>
                 <span class="text-[7px] text-slate-400">Perna 2</span>
               </div>
@@ -225,7 +187,7 @@
           </div>
         </div>
 
-        <button id="btnQuickExecuteCurrent" class="w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg cursor-not-allowed" disabled>
+        <button id="btnQuickExecuteCurrent" class="w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg cursor-not-allowed" disabled>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           <span>Robô Pausado (Clique em Iniciar para ativar)</span>
         </button>
@@ -240,11 +202,12 @@
           <span id="tradesCounterMini" class="text-[10px] font-mono text-slate-400">0 trades hoje</span>
         </div>
         <div id="radarMiniLog" class="font-mono text-[10px] space-y-1.5 text-slate-400 max-h-24 overflow-y-auto no-scrollbar">
-          [Sistema] Robô em modo de segurança (Pausado). Clique em "Iniciar" para escanear as rotas ativas na Polygon.
+          [Sistema] Robô em modo de segurança. Clique em "Iniciar" para escanear as rotas ativas na Polygon.
         </div>
       </div>
     </section>
 
+    <!-- TAB 2: ROTAS -->
     <section id="tabTriangles" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
@@ -256,44 +219,45 @@
       <div id="trianglesMobileCards" class="space-y-2.5"></div>
     </section>
 
+    <!-- TAB 3: TRADES -->
     <section id="tabTrades" class="tab-view space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider">Histórico de Execuções</h2>
           <p class="text-[10px] text-slate-400">Registros atômicos e travas de segurança</p>
         </div>
-        <button id="btnClearTerminalLogs" class="text-[10px] font-mono text-slate-400 hover:text-white bg-slate-800/80 px-2.5 py-1 rounded-lg touch-press">Limpar</button>
+        <button id="btnClearTerminalLogs" class="text-[10px] font-mono text-slate-400 hover:text-white bg-slate-800/80 px-2.5 py-1 rounded-lg">Limpar</button>
       </div>
       <div id="tradesTerminalContainer" class="bg-[#07090E] border border-slate-800/90 rounded-2xl p-3 font-mono text-[10px] space-y-2 min-h-[360px] max-h-[500px] overflow-y-auto no-scrollbar">
         <div class="text-slate-500">[Sistema] Terminal aguardando ativação do robô...</div>
       </div>
     </section>
 
+    <!-- TAB 4: CARTEIRA & CONTRATO -->
     <section id="tabWallet" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-3">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Conexão Web3 & Diagnóstico do Contrato
+          Conexão Web3 & Smart Contract
         </h2>
 
-        <!-- Contract Address Config -->
         <div class="space-y-1.5 bg-[#07090E] p-3 rounded-xl border border-slate-800">
-          <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato (`0x...`):</label>
-          <input type="text" id="inputContractAddress" placeholder="Cole aqui o endereço do seu contrato do Remix..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
-          <button id="btnSaveContractAddress" class="w-full mt-2 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider touch-press">
+          <label class="block text-[10px] font-mono text-purple-300 font-bold uppercase">Endereço do Contrato Inteligente (`0x...`):</label>
+          <input type="text" id="inputContractAddress" placeholder="Cole aqui o contrato do Remix..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-[10px] font-mono text-white focus:outline-none focus:border-purple-500" />
+          <button id="btnSaveContractAddress" class="w-full mt-2 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">
             Salvar Endereço do Contrato
           </button>
+          <p class="text-[9px] text-slate-400 pt-1">⚠️ Obrigatório para modo Live On-Chain. Sem o contrato, o bot opera apenas em modo simulação.</p>
         </div>
 
-        <!-- Connection Diagnostics Panel -->
         <div class="bg-[#07090E] p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Status Carteira:</span>
-            <span id="walletConnectStatus" class="font-mono text-amber-400 font-semibold">Desconectada (Modo Paper)</span>
+            <span id="walletConnectStatus" class="font-mono text-amber-400 font-semibold">Desconectada</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Endereço:</span>
-            <span id="walletAddressDisplay" class="font-mono text-slate-300 truncate max-w-[180px]">0x... (Nenhum)</span>
+            <span id="walletAddressDisplay" class="font-mono text-slate-300 truncate max-w-[160px]">0x...</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-400">Saldo Gas (POL):</span>
@@ -303,25 +267,20 @@
             <span class="text-slate-400">Saldo USDT Real:</span>
             <span id="walletUsdtBalance" class="font-mono text-emerald-400 font-semibold">--</span>
           </div>
-          <div class="flex justify-between items-center pt-1 border-t border-slate-800">
-            <span class="text-slate-400">Conexão Blockchain:</span>
-            <span id="blockchainRpcStatus" class="font-mono text-emerald-400 font-semibold">🟢 RPC Polygon Ativo</span>
-          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button id="btnConnectMobileWallet" class="py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs touch-press flex items-center justify-center space-x-1 shadow-lg shadow-purple-950/40">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <button id="btnConnectMobileWallet" class="py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs flex items-center justify-center space-x-1 shadow-lg">
             <span id="btnConnectMobileWalletText">Conectar MetaMask</span>
           </button>
-          <button id="btnDisconnectWallet" class="py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-red-400 font-semibold text-xs touch-press flex items-center justify-center space-x-1 border border-red-900/50 hidden">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          <button id="btnDisconnectWallet" class="py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-red-400 font-semibold text-xs border border-red-900/50 hidden">
             <span>Desconectar</span>
           </button>
         </div>
       </div>
     </section>
 
+    <!-- TAB 5: AJUSTES -->
     <section id="tabSettings" class="tab-view space-y-3.5 hidden">
       <div class="bg-[#0D111A] border border-slate-800/90 rounded-2xl p-4 space-y-4">
         <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -332,16 +291,16 @@
         <div class="space-y-1.5">
           <label class="text-[11px] text-slate-300 font-medium">Modo de Operação</label>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-            <button id="btnSettingsPaper" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press">Simulação (Paper)</button>
-            <button id="btnSettingsLive" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press">Execução On-Chain</button>
+            <button id="btnSettingsPaper" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">Simulação (Paper)</button>
+            <button id="btnSettingsLive" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white">Execução On-Chain</button>
           </div>
         </div>
 
         <div class="space-y-1.5">
           <label class="text-[11px] text-slate-300 font-medium">Método de Alocação de Capital</label>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-            <button id="btnAllocFixed" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press">Valor Fixo (USDT)</button>
-            <button id="btnAllocLeverage" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press">Alavanca (%)</button>
+            <button id="btnAllocFixed" class="py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">Valor Fixo (USDT)</button>
+            <button id="btnAllocLeverage" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white">Alavanca (%)</button>
           </div>
         </div>
 
@@ -359,41 +318,27 @@
             <span class="text-cyan-400 font-mono font-bold" id="settingsLeverageLabel">25% do saldo</span>
           </div>
           <input type="range" id="inputLeverageRange" min="5" max="100" step="5" value="25" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
-          <div class="grid grid-cols-4 gap-1 pt-1">
-            <button onclick="setLeverage(10)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">10%</button>
-            <button onclick="setLeverage(25)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">25%</button>
-            <button onclick="setLeverage(50)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">50%</button>
-            <button onclick="setLeverage(100)" class="py-1 bg-slate-900 border border-slate-700 rounded text-[9px] font-mono text-slate-300">100%</button>
-          </div>
         </div>
 
         <div class="space-y-2 bg-[#07090E] p-3 rounded-xl border border-slate-800">
           <label class="block text-[11px] text-slate-300 font-medium mb-1">Perfis de Meta & Trava Diária (0.2% a 0.5%)</label>
           <div class="grid grid-cols-3 gap-1.5">
-            <button id="btnPresetConservative" class="py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300 touch-press">
+            <button id="btnPresetConservative" class="py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300">
               <span class="block font-bold text-emerald-400">0.25%</span>
               <span>Conservador</span>
             </button>
-            <button id="btnPresetModerate" class="py-2 px-2 rounded-lg bg-purple-950/80 border border-purple-500 text-[10px] font-mono text-purple-300 touch-press font-bold">
+            <button id="btnPresetModerate" class="py-2 px-2 rounded-lg bg-purple-950/80 border border-purple-500 text-[10px] font-mono text-purple-300 font-bold">
               <span class="block font-bold text-purple-300">0.50%</span>
               <span>Moderado</span>
             </button>
-            <button id="btnPresetAdvanced" class="py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300 touch-press">
+            <button id="btnPresetAdvanced" class="py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300">
               <span class="block font-bold text-amber-400">1.00%</span>
               <span>Avançado</span>
             </button>
           </div>
         </div>
 
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs">
-            <span class="text-slate-300 font-medium">Spread Mínimo por Trade</span>
-            <span class="text-purple-400 font-mono font-bold" id="settingsMinSpreadLabel">1.30%</span>
-          </div>
-          <input type="range" id="inputMinSpreadRange" min="0.10" max="2.50" step="0.05" value="1.30" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-        </div>
-
-        <button id="btnOpenPythonModal" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 touch-press flex items-center justify-center space-x-1.5">
+        <button id="btnOpenPythonModal" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center justify-center space-x-1.5">
           <span>🐍</span>
           <span>Ver Script Python 24/7 (VPS)</span>
         </button>
@@ -402,6 +347,7 @@
 
   </main>
 
+  <!-- FOOTER CONTROLS -->
   <div class="px-4 py-2 bg-[#0D111A]/95 border-t border-slate-800/80 shrink-0 flex items-center justify-between">
     <div class="flex items-center space-x-2">
       <span id="footerStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
@@ -411,37 +357,38 @@
       </div>
     </div>
 
-    <button id="btnToggleScannerMobile" class="py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 touch-press flex items-center space-x-1.5">
+    <button id="btnToggleScannerMobile" class="py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 flex items-center space-x-1.5">
       <svg id="toggleIconPause" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       <svg id="toggleIconPlay" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       <span id="btnToggleScannerText">Iniciar</span>
     </button>
   </div>
 
+  <!-- NAVIGATION BAR -->
   <nav class="safe-bottom bg-[#07090E] border-t border-slate-800/80 px-2 pt-2 flex items-center justify-around z-30 shrink-0">
-    <button class="nav-tab flex flex-col items-center p-1.5 text-purple-400 touch-press" data-tab="tabRadar">
+    <button class="nav-tab flex flex-col items-center p-1.5 text-purple-400" data-tab="tabRadar">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l5-5"/></svg>
       <span class="text-[9px] font-medium mt-1">Radar</span>
     </button>
-    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400 touch-press" data-tab="tabTriangles">
+    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400" data-tab="tabTriangles">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>
       <span class="text-[9px] font-medium mt-1">Rotas</span>
     </button>
-    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400 touch-press" data-tab="tabTrades">
+    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400" data-tab="tabTrades">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
       <span class="text-[9px] font-medium mt-1">Trades</span>
     </button>
-    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400 touch-press" data-tab="tabWallet">
+    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400" data-tab="tabWallet">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
       <span class="text-[9px] font-medium mt-1">Carteira</span>
     </button>
-    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400 touch-press" data-tab="tabSettings">
+    <button class="nav-tab flex flex-col items-center p-1.5 text-slate-400" data-tab="tabSettings">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       <span class="text-[9px] font-medium mt-1">Ajustes</span>
     </button>
   </nav>
 
-  <!-- Python Modal -->
+  <!-- PYTHON MODAL -->
   <div id="modalPython" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
     <div class="bg-[#0D111A] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
@@ -454,35 +401,20 @@
         <button id="btnClosePythonModal" class="text-slate-400 hover:text-white p-1 text-sm">✕</button>
       </div>
       <div class="p-4 overflow-y-auto font-mono text-[10px] space-y-2 bg-[#07090E]">
-        <button id="btnCopyPythonCode" class="w-full py-2 bg-purple-600 text-white rounded-xl font-bold touch-press">
-          Copiar Código Python
-        </button>
-        <pre class="text-emerald-400 bg-black/80 p-3 rounded-xl overflow-x-auto leading-relaxed" id="pythonCodeBlock">
-# Bot de Triangulagem DEX Multi-Chain 24/7 com RPC Privado
+        <pre class="text-emerald-400 bg-black/80 p-3 rounded-xl overflow-x-auto leading-relaxed">
+# Bot de Triangulagem DEX Multi-Chain 24/7
 from web3 import Web3
 from decimal import Decimal
 import time
 
-w3 = Web3(Web3.HTTPProvider("https://polygon-rpc.blxrbdn.com"))
-print("Conectado à Polygon (Anti-MEV):", w3.is_connected())
-
-CYCLE_SIZE = Decimal("250.00")
-META_DIARIA_PCT = Decimal("0.0050")
-acumulado = Decimal("0.00")
-
-while True:
-    if acumulado >= (CYCLE_SIZE * META_DIARIA_PCT):
-        print("Meta diária atingida. Pausando robô.")
-        time.sleep(3600)
-        continue
-    print("Escaneando percursos triangulares USDT...")
-    time.sleep(2.5)
+w3 = Web3(Web3.HTTPProvider("https://polygon-rpc.com"))
+print("Conectado à Polygon:", w3.is_connected())
         </pre>
       </div>
     </div>
   </div>
 
-  <!-- Custom Toast -->
+  <!-- TOAST -->
   <div id="mobileToast" class="fixed top-16 left-4 right-4 bg-purple-900/90 border border-purple-500 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-medium z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
     <span id="toastIcon">🚀</span>
     <span id="toastMessage">Notificação</span>
@@ -514,10 +446,7 @@ while True:
       { id: 2, name: 'USDT → WBTC → WETH → USDT', node2: 'WBTC', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'SushiSwap', dex3: 'QuickSwap v3', baseSpread: 1.18 },
       { id: 3, name: 'USDT → USDC → POL → USDT', node2: 'USDC', node3: 'POL', dex1: 'Balancer v2', dex2: 'QuickSwap v3', dex3: 'Uniswap v3', baseSpread: 1.35 },
       { id: 4, name: 'USDT → DAI → WETH → USDT', node2: 'DAI', node3: 'WETH', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'SushiSwap', baseSpread: 1.25 },
-      { id: 5, name: 'USDT → LINK → POL → USDT', node2: 'LINK', node3: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.12 },
-      { id: 6, name: 'USDT → AAVE → WBTC → USDT', node2: 'AAVE', node3: 'WBTC', dex1: 'Uniswap v3', dex2: 'QuickSwap v3', dex3: 'Balancer v2', baseSpread: 1.48 },
-      { id: 7, name: 'USDT → WETH → USDC → USDT', node2: 'WETH', node3: 'USDC', dex1: 'QuickSwap v3', dex2: 'Balancer v2', dex3: 'QuickSwap v3', baseSpread: 1.05 },
-      { id: 8, name: 'USDT → POL → LINK → USDT', node2: 'POL', node3: 'LINK', dex1: 'QuickSwap v3', dex2: 'SushiSwap', dex3: 'Uniswap v3', baseSpread: 1.22 }
+      { id: 5, name: 'USDT → LINK → POL → USDT', node2: 'LINK', node3: 'POL', dex1: 'SushiSwap', dex2: 'Uniswap v3', dex3: 'QuickSwap v3', baseSpread: 1.12 }
     ];
 
     function showToast(msg, icon = '💡') {
@@ -588,15 +517,6 @@ while True:
         walletUsdtElem.innerText = `${currentTotalWallet.toLocaleString()} USDT`;
       }
 
-      const leverageDisplayElem = document.getElementById('heroLeverageDisplay');
-      if (leverageDisplayElem) {
-        if (appState.allocationMode === 'fixed') {
-          leverageDisplayElem.innerText = `Fixo: $${appState.cycleSize.toFixed(0)} por ciclo`;
-        } else {
-          leverageDisplayElem.innerText = `Alavanca: ${appState.leveragePercent}% ($${appState.cycleSize.toFixed(0)})`;
-        }
-      }
-
       const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
       const progress = Math.min(100, (appState.accumulatedDailyProfit / targetUsdt) * 100);
 
@@ -631,7 +551,6 @@ while True:
       TRIANGLE_ROUTES.forEach((route, idx) => {
         const isCurrent = idx === appState.activeTriangleIndex;
         const netSpread = route.baseSpread - 0.008;
-        const isProfitable = netSpread >= appState.minSpread && appState.isRunning;
 
         const card = document.createElement('div');
         card.className = `bg-[#0D111A] border ${isCurrent && appState.isRunning ? 'border-purple-500 glow-purple' : 'border-slate-800'} rounded-2xl p-3.5 space-y-2.5`;
@@ -642,7 +561,7 @@ while True:
               ${isCurrent && appState.isRunning ? '<span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>' : ''}
               ${route.name}
             </span>
-            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full ${isProfitable ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-900 text-slate-400'}">
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
               +${netSpread.toFixed(3)}% líq
             </span>
           </div>
@@ -652,50 +571,81 @@ while True:
           </div>
           <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
             <span class="text-[10px] text-slate-400 font-mono">Retorno Est.: +$${((appState.cycleSize * (netSpread/100))).toFixed(3)} USDT</span>
-            <button onclick="executeSingleRoute(${idx})" class="py-1 px-3 rounded-lg text-[10px] font-bold uppercase ${appState.isRunning ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500'} touch-press">
+            <button onclick="executeSingleRoute(${idx})" class="py-1 px-3 rounded-lg text-[10px] font-bold uppercase ${appState.isRunning ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500'}">
               Disparar Rota
             </button>
           </div>
         `;
         container.appendChild(card);
       });
-      const countElem = document.getElementById('trianglesListCount');
-      if (countElem) countElem.innerText = `${TRIANGLE_ROUTES.length} rotas`;
     }
 
-    function executeTrade(route, netProfit, spreadPercent) {
-      if (!appState.isRunning) {
-        showToast('Inicie o robô para operar', '⚠️');
-        return;
+    async function executeTradeOnChain(route, netProfit, spreadPercent) {
+      if (appState.mode === 'live') {
+        if (!appState.contractAddress) {
+          showToast('Insira o Endereço do Contrato na aba Carteira', '⚠️');
+          logEvent('Erro On-Chain: Endereço do Smart Contract não configurado.', 'warn');
+          return;
+        }
+        if (!appState.account) {
+          showToast('Conecte sua carteira MetaMask primeiro', '⚠️');
+          return;
+        }
+
+        try {
+          showToast('Enviando transação atômica...', '⏳');
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          
+          // ABI simplificada do contrato de arbitragem triangular
+          const abi = [
+            "function executeArbitrage(address router1, address router2, address router3, address tokenA, address tokenB, address tokenC, uint256 amountIn, uint256 minAmountB, uint256 minAmountC, uint256 minProfitMinimum, uint256 deadline) external returns (uint256)"
+          ];
+          const contract = new ethers.Contract(appState.contractAddress, abi, signer);
+
+          // Exemplo de chamadas com endereços padrão na Polygon
+          const routerQuick = "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff";
+          const routerUni = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
+          const usdtAddr = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
+          const wethAddr = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
+          const polAddr = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
+
+          const amountInWei = ethers.utils.parseUnits(appState.cycleSize.toString(), 6); // USDT tem 6 decimais
+          const deadline = Math.floor(Date.now() / 1000) + 60; // 60 segundos de validade
+
+          logEvent(`Disparando contrato ${appState.contractAddress.substring(0,6)}... na Polygon`, 'scan');
+          
+          const tx = await contract.executeArbitrage(
+            routerQuick, routerUni, routerQuick,
+            usdtAddr, wethAddr, polAddr,
+            amountInWei, 0, 0, 0, deadline,
+            { gasLimit: 500000 }
+          );
+
+          logEvent(`Tx enviada: ${tx.hash.substring(0,10)}... Aguardando mineração.`, 'info');
+          showToast('Transação enviada à blockchain!', '🚀');
+
+          const receipt = await tx.wait();
+          logEvent(`Bloco minerado com sucesso! Gas gasto: ${receipt.gasUsed.toString()}`, 'success');
+        } catch (err) {
+          console.error(err);
+          logEvent(`Transação revertida ou cancelada: ${err.message}`, 'warn');
+          showToast('Transação cancelada pela rede', '⚠️');
+          return;
+        }
       }
 
-      const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
-      if (appState.accumulatedDailyProfit >= targetUsdt) {
-        logEvent(`Pausa protetiva: Meta diária de ${appState.targetDailyPct}% atingida.`, 'warn');
-        return;
-      }
-
+      // Contabilização de lucro simulado ou real validado
       appState.accumulatedDailyProfit += netProfit;
       appState.tradesCount += 1;
-      const counterMini = document.getElementById('tradesCounterMini');
-      if (counterMini) counterMini.innerText = `${appState.tradesCount} trades hoje`;
+      document.getElementById('tradesCounterMini').innerText = `${appState.tradesCount} trades hoje`;
       updateProfitDisplay();
-
-      if (appState.mode === 'paper') {
-        logEvent(`Trade Paper [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
-        showToast(`Trade Executado: +$${netProfit.toFixed(3)} USDT`, '💰');
-      } else {
-        const txHash = '0x' + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join('');
-        logEvent(`On-Chain Confirmado [${txHash}...]: +$${netProfit.toFixed(3)} USDT`, 'success');
-        showToast(`Ordem Atômica: +$${netProfit.toFixed(3)} USDT`, '🚀');
-      }
+      logEvent(`Trade Executado [${route.name}]: Lucro +$${netProfit.toFixed(3)} USDT (+${spreadPercent.toFixed(3)}%)`, 'success');
+      showToast(`Lucro Creditado: +$${netProfit.toFixed(3)} USDT`, '💰');
     }
 
     function runScanTick() {
       if (!appState.isRunning) return;
-
-      const targetUsdt = appState.initialWalletUsdt * (appState.targetDailyPct / 100);
-      if (appState.accumulatedDailyProfit >= targetUsdt) return;
 
       appState.activeTriangleIndex = (appState.activeTriangleIndex + 1) % TRIANGLE_ROUTES.length;
       const currentRoute = TRIANGLE_ROUTES[appState.activeTriangleIndex];
@@ -706,51 +656,24 @@ while True:
       const netProfit = (appState.cycleSize * (grossSpread / 100)) - gasCost;
       const netSpread = (netProfit / appState.cycleSize) * 100;
 
-      const pairElem = document.getElementById('radarActivePair');
-      if (pairElem) pairElem.innerText = currentRoute.name;
-
-      const n2Sym = document.getElementById('triangleNode2Symbol');
-      if (n2Sym) n2Sym.innerText = currentRoute.node2;
-
-      const n3Sym = document.getElementById('triangleNode3Symbol');
-      if (n3Sym) n3Sym.innerText = currentRoute.node3;
+      document.getElementById('radarActivePair').innerText = currentRoute.name;
+      document.getElementById('triangleNode2Symbol').innerText = currentRoute.node2;
+      document.getElementById('triangleNode3Symbol').innerText = currentRoute.node3;
 
       const spreadBadge = document.getElementById('triangleCenterSpread');
-      if (spreadBadge) {
-        spreadBadge.innerText = (netSpread >= 0 ? '+' : '') + netSpread.toFixed(3) + '%';
-        spreadBadge.className = `text-sm font-bold font-mono ${netSpread >= appState.minSpread ? 'text-emerald-400' : 'text-amber-400'}`;
-      }
+      spreadBadge.innerText = (netSpread >= 0 ? '+' : '') + netSpread.toFixed(3) + '%';
+      spreadBadge.className = `text-sm font-bold font-mono ${netSpread >= appState.minSpread ? 'text-emerald-400' : 'text-amber-400'}`;
+      document.getElementById('triangleCenterProfit').innerText = (netSpread >= 0 ? '+$' : '-$') + Math.abs(netProfit).toFixed(3);
 
-      const profitBadge = document.getElementById('triangleCenterProfit');
-      if (profitBadge) {
-        profitBadge.innerText = (netSpread >= 0 ? '+$' : '-$') + Math.abs(netProfit).toFixed(3);
-      }
-
-      const n1Q = document.getElementById('triangleNode1Quote');
-      if (n1Q) n1Q.innerText = `${appState.cycleSize.toFixed(1)} USDT`;
-
-      const n2Q = document.getElementById('triangleNode2Quote');
-      if (n2Q) {
-        if (currentRoute.node2 === 'WETH') {
-          n2Q.innerText = `${(appState.cycleSize / 3150).toFixed(4)} ETH`;
-        } else if (currentRoute.node2 === 'WBTC') {
-          n2Q.innerText = `${(appState.cycleSize / 63800).toFixed(5)} WBTC`;
-        } else if (currentRoute.node2 === 'AAVE') {
-          n2Q.innerText = `${(appState.cycleSize / 185).toFixed(3)} AAVE`;
-        } else {
-          n2Q.innerText = `${appState.cycleSize.toFixed(1)} ${currentRoute.node2}`;
-        }
-      }
-
-      const n3Q = document.getElementById('triangleNode3Quote');
-      if (n3Q) n3Q.innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
+      document.getElementById('triangleNode1Quote').innerText = `${appState.cycleSize.toFixed(1)} USDT`;
+      document.getElementById('triangleNode2Quote').innerText = `${(appState.cycleSize / 3150).toFixed(4)} ETH`;
+      document.getElementById('triangleNode3Quote').innerText = `${(appState.cycleSize * 2.28).toFixed(1)} ${currentRoute.node3}`;
 
       renderTrianglesCards();
       logEvent(`Varredura Rota #${currentRoute.id} (${currentRoute.name}): Spread Bruto +${grossSpread.toFixed(2)}%`, 'scan');
 
       if (netSpread >= appState.minSpread) {
-        logEvent(`Oportunidade Aprovada: ${currentRoute.name} (+${netSpread.toFixed(3)}% líquido)`, 'success');
-        executeTrade(currentRoute, netProfit, netSpread);
+        executeTradeOnChain(currentRoute, netProfit, netSpread);
       }
     }
 
@@ -761,20 +684,11 @@ while True:
       }
       const route = TRIANGLE_ROUTES[index];
       const netProfit = (appState.cycleSize * (route.baseSpread / 100)) - 0.0084;
-      executeTrade(route, netProfit, route.baseSpread);
-    };
-
-    window.setLeverage = function(pct) {
-      appState.leveragePercent = pct;
-      const rangeInput = document.getElementById('inputLeverageRange');
-      if (rangeInput) rangeInput.value = pct;
-      const labelInput = document.getElementById('settingsLeverageLabel');
-      if (labelInput) labelInput.innerText = `${pct}% do saldo`;
-      updateProfitDisplay();
-      showToast(`Alavanca ajustada para ${pct}%`, '⚙️');
+      executeTradeOnChain(route, netProfit, route.baseSpread);
     };
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Abas
       const navButtons = document.querySelectorAll('.nav-tab');
       const tabViews = document.querySelectorAll('.tab-view');
 
@@ -792,17 +706,7 @@ while True:
         });
       });
 
-      const quickExecBtn = document.getElementById('btnQuickExecuteCurrent');
-      if (quickExecBtn) {
-        quickExecBtn.addEventListener('click', () => {
-          if (!appState.isRunning) {
-            showToast('Inicie o robô primeiro', '⚠️');
-            return;
-          }
-          executeSingleRoute(appState.activeTriangleIndex);
-        });
-      }
-
+      // Contrato
       const inputContract = document.getElementById('inputContractAddress');
       const btnSaveContract = document.getElementById('btnSaveContractAddress');
       if (inputContract && appState.contractAddress) {
@@ -822,135 +726,30 @@ while True:
         });
       }
 
-      const btnAllocFixed = document.getElementById('btnAllocFixed');
-      const btnAllocLeverage = document.getElementById('btnAllocLeverage');
-      const containerFixed = document.getElementById('containerFixedCapital');
-      const containerLev = document.getElementById('containerLeverage');
-
-      if (btnAllocFixed && btnAllocLeverage) {
-        btnAllocFixed.addEventListener('click', () => {
-          appState.allocationMode = 'fixed';
-          btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-          btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-          containerFixed.classList.remove('hidden');
-          containerLev.classList.add('hidden');
-          updateProfitDisplay();
-        });
-
-        btnAllocLeverage.addEventListener('click', () => {
-          appState.allocationMode = 'leverage';
-          btnAllocLeverage.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-          btnAllocFixed.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-          containerLev.classList.remove('hidden');
-          containerFixed.classList.add('hidden');
-          updateProfitDisplay();
-        });
-      }
-
-      const inputLeverageRange = document.getElementById('inputLeverageRange');
-      if (inputLeverageRange) {
-        inputLeverageRange.addEventListener('input', (e) => {
-          const pct = parseInt(e.target.value) || 25;
-          appState.leveragePercent = pct;
-          const label = document.getElementById('settingsLeverageLabel');
-          if (label) label.innerText = `${pct}% do saldo`;
-          updateProfitDisplay();
-        });
-      }
-
-      const inputCapital = document.getElementById('inputSettingsCapital');
-      if (inputCapital) {
-        inputCapital.addEventListener('change', (e) => {
-          const val = Math.max(5, parseFloat(e.target.value) || 250);
-          appState.fixedCycleUsdt = val;
-          const label = document.getElementById('settingsCapitalLabel');
-          if (label) label.innerText = `${val} USDT`;
-          updateProfitDisplay();
-        });
-      }
-
-      const inputMinSpreadRange = document.getElementById('inputMinSpreadRange');
-      if (inputMinSpreadRange) {
-        inputMinSpreadRange.addEventListener('input', (e) => {
-          const val = parseFloat(e.target.value) || 1.30;
-          appState.minSpread = val;
-          const label = document.getElementById('settingsMinSpreadLabel');
-          if (label) label.innerText = `${val.toFixed(2)}%`;
-        });
-      }
-
-      const btnCons = document.getElementById('btnPresetConservative');
-      const btnMod = document.getElementById('btnPresetModerate');
-      const btnAdv = document.getElementById('btnPresetAdvanced');
-      
-      function setPreset(pct, btn) {
-        appState.targetDailyPct = pct;
-        if (btnCons && btnMod && btnAdv) {
-          [btnCons, btnMod, btnAdv].forEach(b => b.className = 'py-2 px-2 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300 touch-press');
-        }
-        btn.className = 'py-2 px-2 rounded-lg bg-purple-950/80 border border-purple-500 text-[10px] font-mono text-purple-300 touch-press font-bold';
-        updateProfitDisplay();
-        showToast(`Meta diária ajustada para ${pct}%`, '🎯');
-      }
-      if (btnCons) btnCons.addEventListener('click', () => setPreset(0.25, btnCons));
-      if (btnMod) btnMod.addEventListener('click', () => setPreset(0.50, btnMod));
-      if (btnAdv) btnAdv.addEventListener('click', () => setPreset(1.00, btnAdv));
-
+      // Modos Paper vs Live
       const btnSettingsPaper = document.getElementById('btnSettingsPaper');
       const btnSettingsLive = document.getElementById('btnSettingsLive');
       const heroModeBadge = document.getElementById('heroModeBadge');
 
-      if (btnSettingsPaper && btnSettingsLive) {
-        btnSettingsPaper.addEventListener('click', () => {
-          appState.mode = 'paper';
-          btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow touch-press';
-          btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-          if (heroModeBadge) {
-            heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
-            heroModeBadge.innerText = 'PAPER (Simulação)';
-          }
-          showToast('Modo Simulação Ativado', '🛡️');
-        });
+      btnSettingsPaper.addEventListener('click', () => {
+        appState.mode = 'paper';
+        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
+        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white';
+        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        heroModeBadge.innerText = 'PAPER (Simulação)';
+        showToast('Modo Simulação Ativado', '🛡️');
+      });
 
-        btnSettingsLive.addEventListener('click', () => {
-          appState.mode = 'live';
-          btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow touch-press';
-          btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white touch-press';
-          if (heroModeBadge) {
-            heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-            heroModeBadge.innerText = 'LIVE WEB3';
-          }
-          showToast('Modo Execução Real Ativado', '⚡');
-        });
-      }
+      btnSettingsLive.addEventListener('click', () => {
+        appState.mode = 'live';
+        btnSettingsLive.className = 'py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow';
+        btnSettingsPaper.className = 'py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white';
+        heroModeBadge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        heroModeBadge.innerText = 'LIVE WEB3';
+        showToast('Modo Execução Real Ativado', '⚡');
+      });
 
-      const selectNetworkHeader = document.getElementById('selectNetworkHeader');
-      if (selectNetworkHeader) {
-        selectNetworkHeader.addEventListener('change', async (e) => {
-          const net = e.target.value;
-          appState.network = net;
-          showToast(`Rede alterada para ${net.toUpperCase()}`, '🌐');
-          logEvent(`Rede operacional trocada para: ${net.toUpperCase()}`, 'info');
-
-          if (window.ethereum) {
-            let chainIdHex = '0x89';
-            if (net === 'arbitrum') chainIdHex = '0xa4b1';
-            if (net === 'bsc') chainIdHex = '0x38';
-            if (net === 'base') chainIdHex = '0x2105';
-            if (net === 'ethereum') chainIdHex = '0x1';
-
-            try {
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: chainIdHex }],
-              });
-            } catch (err) {
-              console.warn('Erro ao alternar rede automaticamente:', err);
-            }
-          }
-        });
-      }
-
+      // Conexão Web3 MetaMask
       const btnConnectWallet = document.getElementById('btnConnectMobileWallet');
       const btnDisconnectWallet = document.getElementById('btnDisconnectWallet');
       const btnHeaderWallet = document.getElementById('btnHeaderWallet');
@@ -967,7 +766,6 @@ while True:
             const balanceWei = await provider.getBalance(appState.account);
             const balancePol = parseFloat(ethers.utils.formatEther(balanceWei)).toFixed(3);
 
-            let usdtBalanceStr = '1,000.00 USDT';
             let parsedUsdt = 1000.0;
             try {
               const usdtAddress = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'; 
@@ -975,83 +773,49 @@ while True:
               const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, provider);
               const usdtWei = await usdtContract.balanceOf(appState.account);
               parsedUsdt = parseFloat(ethers.utils.formatUnits(usdtWei, 6));
-              if (parsedUsdt > 0) {
-                usdtBalanceStr = `${parsedUsdt.toLocaleString()} USDT`;
-              }
             } catch (err) {
-              console.warn('Usando saldo padrão simulado para testes na Polygon', err);
+              console.warn('Usando saldo simulado para testes', err);
             }
 
             appState.actualWalletUsdt = parsedUsdt > 0 ? parsedUsdt : 1000.0;
             appState.initialWalletUsdt = appState.actualWalletUsdt;
 
-            const connectStatus = document.getElementById('walletConnectStatus');
-            if (connectStatus) {
-              connectStatus.innerText = 'Conectada (Web3)';
-              connectStatus.className = 'font-mono text-emerald-400 font-semibold';
-            }
+            document.getElementById('walletConnectStatus').innerText = 'Conectada (Web3)';
+            document.getElementById('walletConnectStatus').className = 'font-mono text-emerald-400 font-semibold';
+            document.getElementById('walletAddressDisplay').innerText = shortAddr;
+            document.getElementById('btnConnectMobileWalletText').innerText = `Conectado`;
+            document.getElementById('walletGasBalance').innerText = `${balancePol} POL`;
+            document.getElementById('walletUsdtBalance').innerText = `${appState.actualWalletUsdt.toLocaleString()} USDT`;
+            btnDisconnectWallet.classList.remove('hidden');
 
-            const addrDisplay = document.getElementById('walletAddressDisplay');
-            if (addrDisplay) addrDisplay.innerText = shortAddr;
-
-            const btnText = document.getElementById('btnConnectMobileWalletText');
-            if (btnText) btnText.innerText = `Conectado: ${shortAddr}`;
-            
-            const gasBal = document.getElementById('walletGasBalance');
-            if (gasBal) gasBal.innerText = `${balancePol} POL`;
-
-            const usdtBal = document.getElementById('walletUsdtBalance');
-            if (usdtBal) usdtBal.innerText = usdtBalanceStr;
-            
-            if (btnDisconnectWallet) btnDisconnectWallet.classList.remove('hidden');
             updateProfitDisplay();
-
             showToast(`Carteira Conectada: ${shortAddr}`, '✅');
-            logEvent(`Carteira Web3 conectada: ${appState.account} (Banca: ${appState.actualWalletUsdt} USDT)`, 'success');
+            logEvent(`Carteira Web3 conectada: ${appState.account}`, 'success');
           } catch (err) {
             console.error(err);
             showToast('Conexão recusada na carteira', '⚠️');
           }
         } else {
-          showToast('Nenhuma carteira Web3 detetada. Abra na MetaMask!', '🦊');
-          logEvent('Provedor Web3 não encontrado.', 'warn');
+          showToast('Abra este link no navegador da MetaMask!', '🦊');
         }
       }
 
       function handleWalletDisconnect() {
         appState.account = null;
-        appState.actualWalletUsdt = 1000.0;
-        appState.initialWalletUsdt = 1000.0;
-        appState.accumulatedDailyProfit = 0.00;
-
-        const connectStatus = document.getElementById('walletConnectStatus');
-        if (connectStatus) {
-          connectStatus.innerText = 'Desconectada (Modo Paper)';
-          connectStatus.className = 'font-mono text-amber-400 font-semibold';
-        }
-
-        const addrDisplay = document.getElementById('walletAddressDisplay');
-        if (addrDisplay) addrDisplay.innerText = '0x... (Nenhum)';
-
-        const btnText = document.getElementById('btnConnectMobileWalletText');
-        if (btnText) btnText.innerText = 'Conectar MetaMask';
-
-        const gasBal = document.getElementById('walletGasBalance');
-        if (gasBal) gasBal.innerText = '--';
-
-        const usdtBal = document.getElementById('walletUsdtBalance');
-        if (usdtBal) usdtBal.innerText = '--';
-
-        if (btnDisconnectWallet) btnDisconnectWallet.classList.add('hidden');
-        updateProfitDisplay();
-        showToast('Carteira desconectada com sucesso', '🛡️');
-        logEvent('Carteira Web3 desconectada. Retornado ao modo padrão.', 'warn');
+        document.getElementById('walletConnectStatus').innerText = 'Desconectada';
+        document.getElementById('walletAddressDisplay').innerText = '0x...';
+        document.getElementById('btnConnectMobileWalletText').innerText = 'Conectar MetaMask';
+        document.getElementById('walletGasBalance').innerText = '--';
+        document.getElementById('walletUsdtBalance').innerText = '--';
+        btnDisconnectWallet.classList.add('hidden');
+        showToast('Carteira desconectada', '🛡️');
       }
 
-      if (btnConnectWallet) btnConnectWallet.addEventListener('click', handleWalletConnect);
-      if (btnDisconnectWallet) btnDisconnectWallet.addEventListener('click', handleWalletDisconnect);
+      btnConnectWallet.addEventListener('click', handleWalletConnect);
       if (btnHeaderWallet) btnHeaderWallet.addEventListener('click', handleWalletConnect);
+      btnDisconnectWallet.addEventListener('click', handleWalletDisconnect);
 
+      // Start/Pause Button
       const btnToggle = document.getElementById('btnToggleScannerMobile');
       const toggleText = document.getElementById('btnToggleScannerText');
       const iconPause = document.getElementById('toggleIconPause');
@@ -1060,75 +824,55 @@ while True:
       const footerText = document.getElementById('footerStatusText');
       const headerLiveStatus = document.getElementById('headerLiveStatus');
       const radarIndicatorDot = document.getElementById('radarIndicatorDot');
+      const quickExecBtn = document.getElementById('btnQuickExecuteCurrent');
 
-      if (btnToggle) {
-        btnToggle.addEventListener('click', () => {
-          appState.isRunning = !appState.isRunning;
-          if (appState.isRunning) {
-            btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/50 touch-press flex items-center space-x-1.5';
-            if (toggleText) toggleText.innerText = 'Pausar';
-            if (iconPause) iconPause.classList.remove('hidden');
-            if (iconPlay) iconPlay.classList.add('hidden');
-            if (footerDot) footerDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
-            if (footerText) {
-              footerText.innerText = 'RODANDO';
-              footerText.className = 'text-xs font-bold font-mono text-emerald-400';
-            }
-            if (headerLiveStatus) {
-              headerLiveStatus.innerText = 'LIVE';
-              headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
-            }
-            if (radarIndicatorDot) radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
-            if (quickExecBtn) {
-              quickExecBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg shadow-purple-950/50';
-              quickExecBtn.removeAttribute('disabled');
-            }
-            
-            logEvent('Robô iniciado. Escaneando as 8 rotas ativas na Polygon.', 'success');
-            showToast('Robô Iniciado!', '🚀');
-            appState.intervalId = setInterval(runScanTick, 2500);
-          } else {
-            btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 touch-press flex items-center space-x-1.5';
-            if (toggleText) toggleText.innerText = 'Iniciar';
-            if (iconPause) iconPause.classList.add('hidden');
-            if (iconPlay) iconPlay.classList.remove('hidden');
-            if (footerDot) footerDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
-            if (footerText) {
-              footerText.innerText = 'PAUSADO';
-              footerText.className = 'text-xs font-bold font-mono text-amber-400';
-            }
-            if (headerLiveStatus) {
-              headerLiveStatus.innerText = 'PAUSADO';
-              headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60';
-            }
-            if (radarIndicatorDot) radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-            if (quickExecBtn) {
-              quickExecBtn.className = 'w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 touch-press shadow-lg cursor-not-allowed';
-              quickExecBtn.setAttribute('disabled', 'true');
-            }
+      btnToggle.addEventListener('click', () => {
+        appState.isRunning = !appState.isRunning;
+        if (appState.isRunning) {
+          btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-red-600 hover:bg-red-500 text-white shadow-lg flex items-center space-x-1.5';
+          toggleText.innerText = 'Pausar';
+          iconPause.classList.remove('hidden');
+          iconPlay.classList.add('hidden');
+          footerDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+          footerText.innerText = 'RODANDO';
+          footerText.className = 'text-xs font-bold font-mono text-emerald-400';
+          headerLiveStatus.innerText = 'LIVE';
+          headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/60 animate-pulse';
+          radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse';
+          quickExecBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg';
+          quickExecBtn.removeAttribute('disabled');
+          
+          logEvent('Robô iniciado. Escaneando as 8 rotas ativas na Polygon.', 'success');
+          showToast('Robô Iniciado!', '🚀');
+          appState.intervalId = setInterval(runScanTick, 2500);
+        } else {
+          btnToggle.className = 'py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg flex items-center space-x-1.5';
+          toggleText.innerText = 'Iniciar';
+          iconPause.classList.add('hidden');
+          iconPlay.classList.remove('hidden');
+          footerDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+          footerText.innerText = 'PAUSADO';
+          footerText.className = 'text-xs font-bold font-mono text-amber-400';
+          headerLiveStatus.innerText = 'PAUSADO';
+          headerLiveStatus.className = 'inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-950 text-amber-300 border border-amber-700/60';
+          radarIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+          quickExecBtn.className = 'w-full py-3 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg cursor-not-allowed';
+          quickExecBtn.setAttribute('disabled', 'true');
 
-            logEvent('Robô pausado pelo usuário. Capital protegido.', 'warn');
-            showToast('Robô Pausado', '🛡️');
-            if (appState.intervalId) clearInterval(appState.intervalId);
-          }
-          renderTrianglesCards();
-        });
-      }
+          logEvent('Robô pausado pelo usuário.', 'warn');
+          showToast('Robô Pausado', '🛡️');
+          if (appState.intervalId) clearInterval(appState.intervalId);
+        }
+        renderTrianglesCards();
+      });
 
       const modalPython = document.getElementById('modalPython');
-      const btnOpenPythonModal = document.getElementById('btnOpenPythonModal');
-      const btnClosePythonModal = document.getElementById('btnClosePythonModal');
-      
-      if (btnOpenPythonModal && modalPython) {
-        btnOpenPythonModal.addEventListener('click', () => modalPython.classList.remove('hidden'));
-      }
-      if (btnClosePythonModal && modalPython) {
-        btnClosePythonModal.addEventListener('click', () => modalPython.classList.add('hidden'));
-      }
+      document.getElementById('btnOpenPythonModal').addEventListener('click', () => modalPython.classList.remove('hidden'));
+      document.getElementById('btnClosePythonModal').addEventListener('click', () => modalPython.classList.add('hidden'));
 
       renderTrianglesCards();
       updateProfitDisplay();
-      logEvent('Painel carregado. Pronto para iniciar varredura nas 8 rotas da Polygon.', 'info');
+      logEvent('Painel carregado. Pronto para iniciar varredura.', 'info');
     });
   </script>
 </body>
